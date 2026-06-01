@@ -1,3 +1,5 @@
+from continuedfrac import continuedfrac
+
 class TangleState():
     def __init__(self):
         self.orient = "UP"
@@ -30,9 +32,20 @@ class TangleState():
         if self.points[2] == "X+":
             self.orient = "UP"
 
-tangle = TangleState()
-print(tangle.orient, tangle.points)
-tangle.t_twist()
-print(tangle.orient, tangle.points)
-tangle.r_twist()
-print(tangle.orient, tangle.points)
+# Returns the permutation of [Y, X-, X+] given tau_(u/v)
+def get_state(u,v):
+    x = continuedfrac(u,v)
+    tangle = TangleState()
+    x.reverse()
+ 
+    par = 0
+    for k in x:
+        if par == 0:
+            if k % 2 != 0:
+                tangle.t_twist()
+
+        else:
+            if k % 2 != 0:
+                tangle.r_twist()
+        par = 1 - par
+    return tangle.points
