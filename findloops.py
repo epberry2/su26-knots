@@ -1,0 +1,82 @@
+from collections import defaultdict
+
+def findpath(num, denom):
+    tupleslist = []
+    for i in range(num // 2):
+        tupleslist.append((1 + i, num - i))
+    for i in range(denom // 2):
+        tupleslist.append((num + 1 + i, num + denom - i))
+    if num > denom:
+        for i in range(denom):
+            tupleslist.append((num - i, num + denom - i))
+        for i in range((num - denom) // 2):
+            tupleslist.append((i + 1, num - denom - i))
+    else:
+        for i in range(num):
+            tupleslist.append((num - i, num + denom - i))
+        for i in range((denom - num) // 2):
+            tupleslist.append((num + 1 + i, denom - i))
+    adj = defaultdict(list)
+    for a, b in tupleslist:
+        adj[a].append(b)
+        adj[b].append(a)    
+    start = 0
+    if (num % 2 == 1):
+        start = (num + 1) // 2
+    else:
+        start = (num - denom + 1) // 2
+    prev = None
+    path = [start]
+    while len(path) < num + denom:
+        cur = path[-1]
+        nxt = next(x for x in adj[cur] if x != prev)
+        path.append(nxt)
+        prev = cur
+    return path
+    
+
+def findloops(num, denom, start, end):
+    path = findpath(num, denom)
+    startbeforeend = True
+    index = 0
+    for i in range(len(path)):
+        if path[i] == end:
+            startbeforeend = False
+        if path[i] == start:
+            index = i
+            break
+    loops = []
+    if startbeforeend:
+        iter = 1
+    else:
+        iter = -1
+    while path[index] != end:
+        nextindex = index + iter
+        cur = path[index]
+        nxt = path[nextindex]
+        index += iter
+        if cur > num and nxt > num:
+            if num > denom or cur + nxt == denom + (2 * num) + 1:
+                loops.append("R")
+                continue
+            loops.append("C")
+            continue
+        if (cur > num and nxt <= num) or (cur <= num and nxt > num):
+            loops.append("T")
+            continue
+        if  denom > num or cur + nxt == num + 1:
+            loops.append("L")
+            continue
+        loops.append("C")
+    return loops
+        
+        
+
+print(findloops(5, 2, 2, 7))
+print(findloops(5, 2, 7, 2))
+print(findloops(5, 2, 3, 4))
+print(findloops(3, 8, 1, 5))
+        
+        
+            
+    
