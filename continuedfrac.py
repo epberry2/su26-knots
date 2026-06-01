@@ -21,5 +21,3 @@ def continuedfrac(a, b):
         parity = 1 - parity
     return X
 
-
-print(continuedfrac(5,12))
