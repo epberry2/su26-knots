@@ -25,7 +25,7 @@ def findpath(num, denom):
         if (num % 2 == 1):
             start = (num + 1) // 2
         else:
-            start = (num - denom + 1) // 2
+            start = num + ((denom + 1) // 2)
     else:
         if (denom % 2 == 1):
             start = num + ((denom + 1) // 2)
