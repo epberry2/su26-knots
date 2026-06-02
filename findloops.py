@@ -6,7 +6,7 @@ def findpath(num, denom):
         tupleslist.append((1 + i, num - i))
     for i in range(denom // 2):
         tupleslist.append((num + 1 + i, num + denom - i))
-    if num > denom:
+    if num >= denom:
         for i in range(denom):
             tupleslist.append((num - i, num + denom - i))
         for i in range((num - denom) // 2):
@@ -21,10 +21,16 @@ def findpath(num, denom):
         adj[a].append(b)
         adj[b].append(a)    
     start = 0
-    if (num % 2 == 1):
-        start = (num + 1) // 2
+    if num >= denom:
+        if (num % 2 == 1):
+            start = (num + 1) // 2
+        else:
+            start = (num - denom + 1) // 2
     else:
-        start = (num - denom + 1) // 2
+        if (denom % 2 == 1):
+            start = num + ((denom + 1) // 2)
+        else:
+            start = (num + 1) // 2
     prev = None
     path = [start]
     while len(path) < num + denom:
@@ -34,6 +40,35 @@ def findpath(num, denom):
         prev = cur
     return path
     
+
+def findpathwithloops(num, denom):
+    path = findpath(num, denom)
+    pathwithloops = []
+    iter = 1
+    end = len(path) - 1
+    index = 0
+    while path[index] != path[end]:
+        pathwithloops.append(path[index])
+        nextindex = index + iter
+        cur = path[index]
+        nxt = path[nextindex]
+        index += iter
+        if cur > num and nxt > num:
+            if num > denom or cur + nxt == denom + (2 * num) + 1:
+                pathwithloops.append("R")
+                continue
+            pathwithloops.append("C")
+            continue
+        if (cur > num and nxt <= num) or (cur <= num and nxt > num):
+            pathwithloops.append("T")
+            continue
+        if  denom > num or cur + nxt == num + 1:
+            pathwithloops.append("L")
+            continue
+        pathwithloops.append("C")
+    pathwithloops.append(path[-1])
+    return pathwithloops
+
 
 def findloops(num, denom, start, end):
     path = findpath(num, denom)
@@ -69,14 +104,4 @@ def findloops(num, denom, start, end):
             continue
         loops.append("C")
     return loops
-        
-        
 
-print(findloops(5, 2, 2, 7))
-print(findloops(5, 2, 7, 2))
-print(findloops(5, 2, 3, 4))
-print(findloops(3, 8, 1, 5))
-        
-        
-            
-    
