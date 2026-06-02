@@ -48,4 +48,6 @@ def get_state(u,v):
             if k % 2 != 0:
                 tangle.r_twist()
         par = 1 - par
-    return tangle.points
+    return (tangle.orient, tangle.points)
+
+print(get_state(5,2))
