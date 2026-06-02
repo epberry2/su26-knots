@@ -48,7 +48,6 @@ def findpathwithloops(num, denom):
     end = len(path) - 1
     index = 0
     while path[index] != path[end]:
-        pathwithloops.append(path[index])
         nextindex = index + iter
         cur = path[index]
         nxt = path[nextindex]
@@ -66,8 +65,7 @@ def findpathwithloops(num, denom):
             pathwithloops.append("L")
             continue
         pathwithloops.append("C")
-    pathwithloops.append(path[-1])
-    return pathwithloops
+    return path, pathwithloops
 
 
 def findloops(num, denom, start, end):
@@ -104,4 +102,3 @@ def findloops(num, denom, start, end):
             continue
         loops.append("C")
     return loops
-
