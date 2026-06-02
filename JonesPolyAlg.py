@@ -4,12 +4,12 @@ from continuedfrac import continuedfrac
 
 q = symbols('q')
 
-T = - Matrix([
+T = Matrix([
     [-q**2, -q],
     [0, 1]
 ])
 
-R = - Matrix([
+R = Matrix([
     [1, 0],
     [-q**-1,-q**-2]
 ])
@@ -48,8 +48,7 @@ def AlgBracket(u,v):
 
     min_power = min(powers)
     #min_power=0
-    return (q**-min_power * v).applyfunc(sp.expand)
+    v = (q**-min_power * v).applyfunc(sp.expand)
 
+    return (sp.Poly(v[0], q), sp.Poly(v[1], q))
 
-
-print(AlgBracket(19,17))
