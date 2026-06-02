@@ -4,12 +4,12 @@ from continuedfrac import continuedfrac
 
 q = symbols('q')
 
-T = Matrix([
+T = - Matrix([
     [-q**2, -q],
     [0, 1]
 ])
 
-R = Matrix([
+R = - Matrix([
     [1, 0],
     [-q**-1,-q**-2]
 ])
@@ -28,6 +28,28 @@ def AlgBracket(u,v):
             v = (R ** k) * v
 
         par = 1 - par
-    return v.applyfunc(sp.expand)
+    v = v.applyfunc(sp.expand)
+    powers = []
+    for term in v[0].as_coefficients_dict().keys():
+        if term == 1:  # It's a constant term (x^0)
+            powers.append(0)
+        elif term.is_Pow:
+            powers.append(term.exp)
+        elif term == q:
+            powers.append(1)
 
-print(AlgBracket(2,5))
+    for term in v[1].as_coefficients_dict().keys():
+        if term == 1:  # It's a constant term (x^0)
+            powers.append(0)
+        elif term.is_Pow:
+            powers.append(term.exp)
+        elif term == q:
+            powers.append(1)        
+
+    min_power = min(powers)
+    #min_power=0
+    return (q**-min_power * v).applyfunc(sp.expand)
+
+
+
+print(AlgBracket(19,17))
