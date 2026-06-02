@@ -71,5 +71,3 @@ def JonesPolyGeo(num, denom):
             PolyRight += Poly(currPar * (q ** currPow), q)
     return (PolyLeft, PolyRight)
 
-print(tuple(p.as_expr() for p in JonesPolyGeo(19, 17)))
-#print(tuple(p.as_expr() for p in JonesPolyGeo(2, 5)))
