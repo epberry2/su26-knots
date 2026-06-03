@@ -48,7 +48,13 @@ def AlgBracket(u,v):
 
     min_power = min(powers)
     #min_power=0
-    v = (q**-min_power * v).applyfunc(sp.expand)
-
+    v = (q**(1-min_power) * v).applyfunc(sp.expand)
+    
     return (sp.Poly(v[0], q), sp.Poly(v[1], q))
 
+def AlgJonesKnot(u,v):
+    x, y = AlgBracket(u,v)
+    y = y.as_expr() * (q + q**-1)
+    return sp.Poly((x.as_expr() + y).expand(),q)
+
+print(AlgJonesKnot(3,1))
