@@ -1,35 +1,12 @@
 from findloops import findloops
 from findloops import findpath
 from findloops import findpathwithloops
-from sympy import symbols, Poly
+from sympy import symbols, Poly, gcd
 from JonesPolyAlg import AlgBracket
+from JonesPolyGeoHelpers import *
 
 q = symbols('q')
 
-def intersectionAboveAxis(num, denom, point):
-    if point <= num // 2:
-        return False
-    elif point <= num and point > (num + 1) // 2:
-        return True
-    elif point < num:
-        return (num >= denom % (2 * num))
-    elif point - num <= denom // 2:
-        return False
-    return True
-
-def rotateCCW(num, denom, point, nextPoint, pathType):
-    if pathType == "L":
-        return intersectionAboveAxis(num, denom, point)
-    if pathType == "R":
-        return not intersectionAboveAxis(num, denom, point)
-    if num >= denom:
-        return point < nextPoint
-    return point > nextPoint
-
-def coeff(pathType):
-    if pathType == "L" or pathType == "R":
-        return 1
-    return -1
 
 def JonesPolyGeo(num, denom):
     path = findpathwithloops(num, denom)[0]
@@ -75,178 +52,50 @@ def JonesPolyGeo(num, denom):
             PolyRight += Poly(currPar * (q ** currPow), q)
     return (PolyLeft, PolyRight)
 
-# Test case
-
-# for p in range(1, 20):
-#     for r in range(1, 20):
-#         if sp.gcd(p, r) > 1:
-#             continue
-#         jonesalg = AlgBracket(p, r)
-#         jonesgeo = JonesPolyGeo(p, r)
-#         a0 = jonesalg[0].as_poly(q)
-#         a1 = jonesalg[1].as_poly(q)
-#         j0 = jonesgeo[0]
-#         j1 = jonesgeo[1]
-
-#         if  (a0 == j0 and a1 == j1) or (-a0 == j0 and -a1 == j1):
-#             continue
-#         else:
-#             print("broke at (" + str(p) + ", " + str(r) + ")")
-#             break
-# print("done")
-
-# def printDebug(intersectionNum, adjust, windL, windC, windR, parity):
-#     # print(f"hit intersection {intersectionNum}")
-#     print(f"monomialArr[{intersectionNum}] = {parity * Poly(q**(2 * (adjust + windL + windC + windR)), q).as_expr()}")
-#     print(f"windL = {windL}, windC = {windC} windR = {windR}")
-    
-# def adjustArr(arr, adjustBy):
-#     for pol in arr:
-#         pol *= Poly(q**adjustBy, q)
 
 def geoJonesKnot(num, denom):
-    # Strategy: Go through the path. You hit a point on the right arc when you 
-    # do a C arc or an R arc. You swap left and right when you do a C arc;
-    # if it is CCW you swap immediately, otherwise, you swap afterwards.
-    # When you do a CW L arc, your winding number around
-    # the left point increases; a CW C arc increases it around the center point;
-    # and a CW R arc increases it around the rightmost point. When you reach the
-    # end, swap left and right and trace backwards to hit the remaining points.
+    # Strategy: Walk along loop with right hand to wall, keeping track of how many times you have looped
+    # around each point. At the end, handle the figure-8 loop, and then return.
+    # If a portion of the figure-8 loop ends with a half C-arc, then the curve
+    # obtained by following the figure-8 half-loop with RH to wall for that portion
+    # will wind an extra time around the middle point due to the half-loop iff the half-loop is CCW
+    # when RH is to wall; likewise, for a half R-arc, iff the half-loop is CW.
+    # Therefore, we include the arcs in the monomials at the midpoints depending on their orientation.
+    
     assert num >= denom, "only rationals >= 1 considered at the moment"
     assert num % 2 == 1, "only odd numerators considered at the moment"
+    path, loops = findpathwithloops(num, denom)
+    curr_state = CurrState() # stores winding number around each vertex, as well as lowest power to normalize
+    monomial_array = [(0, 0)] * num
+    tracePath(num, denom, path, loops, curr_state, monomial_array)
+    # handle endpoint
+    if num < denom: curr_state.wind_r -= 1 # denom > num doesn't occur but it would loop around endpoint first
+    store_monomial(monomial_array, curr_state, num - 1, 1) # parity = 1: RH is to wall
+    if num >= denom: curr_state.wind_r -= 1 
+    # walk backwards
+    tracePath(num, denom, list(reversed(path)), list(reversed(loops)), curr_state, monomial_array)
+    # done!
+    jones_polynomial = Poly(0, q)
+    for coeff, exp in monomial_array:
+        jones_polynomial += Poly(coeff * q ** (exp - curr_state.lowest_power), q)
+    return jones_polynomial
     
-    path = findpathwithloops(num, denom)[0]
-    loops = findpathwithloops(num, denom)[1]
     
-    if num >= denom:
-        startOnLeft = (num % 2 == 1)
-    else:
-        startOnLeft = (denom % 2 == 0)
-        
-    if not startOnLeft:
-        path.reverse()
-        loops.reverse()
-    
-    whichSide = True   # False = Left, True = Right, start on
-    lowestPow = 0
-    windL = 0
-    windC = 0
-    windR = 0
-    monomialArr = [(0, 0)] * (num)
-    
-    for i in range(len(loops)):   # len(loops) + 1 = len(path)
-        pathType = loops[i]
-        if pathType == "T": continue
-        point = path[i]
-        nextPoint = path[i + 1]
-        isCCW = rotateCCW(num, denom, point, nextPoint, pathType)
-        isCW = not isCCW
-        parity = -1 if (point > nextPoint) ^ (pathType == "C") else 1
-        if pathType == "L":
-            if isCCW:
-                windL -= 1
-            else: windL += 1
-        if pathType == "C":
-            intersectionNum = (min(point, nextPoint) - 1) * 2
-            if isCCW:
-                whichSide = not whichSide
-                if whichSide: intersectionNum += 1
-                windC -= 1 # increment beforehand
-                power = 2 * (windL + windC + windR)
-                if lowestPow > power: lowestPow = power
-                monomialArr[intersectionNum] = (parity, power)
-                # printDebug(intersectionNum, adjust, windL, windC, windR, parity)
-            else:
-                if whichSide: intersectionNum += 1
-                power = 2 * (windL + windC + windR)
-                if lowestPow > power: lowestPow = power
-                monomialArr[intersectionNum] = (parity, power)
-                # printDebug(intersectionNum, adjust, windL, windC, windR, parity)
-                windC += 1 # increment aftwerwards
-                whichSide = not whichSide
-        if pathType == "R":
-            intersectionNum = 2 * (min(point, nextPoint) - 1 - num) + (num - denom)
-            if whichSide: intersectionNum += 1
-            if isCW: # increment beforehand
-                windR += 1
-            power = 2 * (windL + windC + windR)
-            if lowestPow > power: lowestPow = power
-            monomialArr[intersectionNum] = (parity, power)
-            # printDebug(intersectionNum, adjust, windL, windC, windR, parity)
-            if isCCW: # increment afterwards
-                windR -= 1
-    # end loop
-    
+print(geoJonesKnot(3,1).as_expr())   # works!
+print(geoJonesKnot(19,11).as_expr()) # works!
 
-    if intersectionAboveAxis(num, denom, path[-1]):
-        if whichSide:
-            windR += 1
-            parity = 1
-    elif not whichSide: # ?????? denom > num
-        windR -= 1
-        parity = -1
-    intersectionNum = num - 1
-    power = 2 * (windL + windC + windR)
-    if lowestPow > power: lowestPow = power
-    monomialArr[intersectionNum] = (parity, power)
-    # printDebug(intersectionNum, adjust, windL, windC, windR, parity)
-    whichSide = not whichSide
-    if intersectionAboveAxis(num, denom, path[-1]):
-        if whichSide:
-            windR -= 1
-            parity = -1
-    elif not whichSide: # ????? denom > num
-            windR += 1
-            parity = 1
 
-    path.reverse()
-    loops.reverse()
 
-    for i in range(len(loops)):   # len(loops) + 1 = len(path)
-        pathType = loops[i]
-        if pathType == "T": continue
-        point = path[i]
-        nextPoint = path[i + 1]
-        isCCW = rotateCCW(num, denom, point, nextPoint, pathType)
-        isCW = not isCCW
-        parity = -1 if (point > nextPoint) ^ (pathType == "C") else 1
-        if pathType == "L":
-            if isCCW:
-                windL -= 1
-            else: windL += 1
-        if pathType == "C":
-            intersectionNum = (min(point, nextPoint) - 1) * 2
-            if isCCW:
-                whichSide = not whichSide
-                if whichSide: intersectionNum += 1
-                windC -= 1 # increment beforehand
-                power = 2 * (windL + windC + windR)
-                if lowestPow > power: lowestPow = power
-                monomialArr[intersectionNum] = (parity, power)
-                # printDebug(intersectionNum, adjust, windL, windC, windR, parity)
-            else:
-                if whichSide: intersectionNum += 1
-                power = 2 * (windL + windC + windR)
-                if lowestPow > power: lowestPow = power
-                monomialArr[intersectionNum] = (parity, power)
-                # printDebug(intersectionNum, adjust, windL, windC, windR, parity)
-                windC += 1 # increment aftwerwards
-                whichSide = not whichSide
-        if pathType == "R":
-            intersectionNum = 2 * (min(point, nextPoint) - 1 - num) + (num - denom)
-            if whichSide: intersectionNum += 1
-            if isCW: # increment beforehand
-                windR += 1
-            power = 2 * (windL + windC + windR)
-            if lowestPow > power: lowestPow = power
-            monomialArr[intersectionNum] = (parity, power)
-            # printDebug(intersectionNum, adjust, windL, windC, windR, parity)
-            if isCCW: # increment afterwards
-                windR -= 1
-    jonesPolynomial = Poly(0, q)
-    for (coeff, exp) in monomialArr:
-        jonesPolynomial += Poly(coeff * q ** (exp - lowestPow), q)
-    return jonesPolynomial
-    
-print(geoJonesKnot(3,1).as_expr())
-print(geoJonesKnot(5,3).as_expr())
+# for i in range(30):
+#     for j in range(30):
+#         if i < j: continue
+#         if i % 2 == 0 or j % 2 == 0: continue
+#         if gcd(i, j) > 1: continue
+#         skip = False
+#         for k in range(j):
+#             if (k * j) % i == 1 or (k * j) % i == i - 1:
+#                 if k % 2 == 1:
+#                     skip = True
+#         if skip: continue
+#         print(f"Jones polynomial of K_{{{i}/{j}}}:")
+#         print(geoJonesKnot(i, j).as_expr())
