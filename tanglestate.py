@@ -50,4 +50,4 @@ def get_state(u,v):
         par = 1 - par
     return (tangle.orient, tangle.points)
 
-print(get_state(5,2))
+# print(get_state(5,2))
