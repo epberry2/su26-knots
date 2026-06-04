@@ -32,10 +32,13 @@ def JonesBracketGeo(num, denom):
     else:
         right_monomials.append((parity, n_power))
     
-    min_power = state.min_power
+    min_power = state.min_n_power
     for parity, power in left_monomials:
         poly_left += Poly(parity * q ** (power - min_power), q)
     for parity, power in right_monomials:
         poly_right += Poly(parity * q ** (power - min_power), q)
     
     return (poly_left, poly_right)
+
+for poly in JonesBracketGeo(5, 2):
+    print(poly.as_expr())

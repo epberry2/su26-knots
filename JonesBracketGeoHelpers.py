@@ -1,12 +1,27 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, InitVar
 
 @dataclass
 class tangleRotateState:
+        # can pass into constructor
     poly_type: str
     on_left: bool
-    quarter_loops: list[int] = field(default_factory=lambda: [0, 0, 0])
-    total_loops: int = 0
-    min_power: int = 0
+    points_state: InitVar[tuple[str, str, str] | None] = None
+        # can't pass into constructor
+    min_m_power: int = field(init = False, default = 0)
+    min_n_power: int = field(init = False, default = 0)
+    quarter_loops: list[int] = field(init = False, default_factory = lambda: [0, 0, 0])
+    total_loops: int = field(init = False, default = 0)
+    x_plus_idx: int = field(init = False, default = 0)
+    x_minus_idx: int = field(init = False, default = 0)
+    y_idx: int = field(init = False, default = 0)
+    
+    def __post_init__(self, points):
+        if points is not None:
+            self.x_plus_idx = points.index("X+")
+            self.x_minus_idx = points.index("X-")
+            self.y_idx = points.index("Y")
+        else: 
+            assert self.poly_type != "H", "For HOMFLY bracked must initialize location of points"
 
     def traverse(self, is_ccw, path_type):
         match path_type:
@@ -23,11 +38,16 @@ class tangleRotateState:
                 parity = -1 if self.total_loops % 2 == 0 else 1
                 m_power = 0
                 n_power = self.quarter_loops[0] + self.quarter_loops[1] + self.quarter_loops[2]
-                self.min_power = min(self.min_power, n_power)
+                self.min_n_power = min(self.min_n_power, n_power)
                 return parity, m_power, n_power
-            case _: # e.g. H for HOMFLY
-                return 0, 0, 0
-                
+            case "H":
+                parity = -1 if self.total_loops % 2 == 0 else 1
+                m_power = self.quarter_loops[self.x_plus_idx]
+                n_power = (self.quarter_loops[self.x_minus_idx] + self.quarter_loops[self.y_idx]
+                                - self.quarter_loops[self.x_plus_idx])
+                self.min_m_power = min(self.min_m_power, m_power)
+                self.min_n_power = min(self.min_n_power, n_power)
+                return parity, m_power, n_power
     
     
 
@@ -62,10 +82,5 @@ def rotateCCW(num, denom, point, nextPoint, pathType):
     if num >= denom:
         return point < nextPoint
     return point > nextPoint
-
-def coeff(pathType):
-    if pathType == "L" or pathType == "R":
-        return 1
-    return -1
 
 
