@@ -1,4 +1,5 @@
 from collections import defaultdict
+from tanglestate import get_state
 
 def findpath(num, denom):
     tupleslist = []
@@ -38,6 +39,18 @@ def findpath(num, denom):
         nxt = next(x for x in adj[cur] if x != prev)
         path.append(nxt)
         prev = cur
+    points = get_state(num, denom)[1]
+    x_min_pos = next(index for index, point in enumerate(points) if point == "X-")
+    match x_min_pos:
+        case 0:
+            if not (path[0] == (num + 1) // 2):
+                path.reverse()
+        case 1:
+            if not (path[0] == (num - denom + 1) // 2):
+                path.reverse()
+        case 2:
+            if not (path[0] == num + (denom + 1) // 2):
+                path.reverse()
     return path
     
 
@@ -102,3 +115,5 @@ def findloops(num, denom, start, end):
             continue
         loops.append("C")
     return loops
+
+# print(findpathwithloops(3, 1))
