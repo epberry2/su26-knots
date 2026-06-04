@@ -55,6 +55,8 @@ def AlgBracket(u,v):
 def AlgJonesKnot(u,v):
     x, y = AlgBracket(u,v)
     y = y.as_expr() * (q + q**-1)
-    return sp.Poly((x.as_expr() + y).expand(),q)
+    jones_poly = sp.Poly((x.as_expr() + y).expand(),q)
+    if (jones_poly(1) == -1):
+        jones_poly *= sp.Poly(-1, q)
+    return jones_poly
 
-print(AlgJonesKnot(3,1))
