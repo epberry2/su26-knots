@@ -2,8 +2,9 @@ from findloops import findloops
 from findloops import findpath
 from findloops import findpathwithloops
 from sympy import symbols, Poly, gcd
-from JonesPolyAlg import AlgBracket
+from JonesPolyAlg import AlgBracket, AlgJonesKnot
 from JonesPolyGeoHelpers import *
+from tanglestate import get_state
 
 q = symbols('q')
 
@@ -64,14 +65,24 @@ def geoJonesKnot(num, denom):
     
     assert num >= denom, "only rationals >= 1 considered at the moment"
     assert num % 2 == 1, "only odd numerators considered at the moment"
+    
+    orientation, points_ = get_state(num, denom)
+    assert orientation == "UP" or orientation == "OP", "tangle has RI orientation"
+    
     path, loops = findpathwithloops(num, denom)
-    curr_state = CurrState() # stores winding number around each vertex, as well as lowest power to normalize
+    curr_state = CurrState(points = points_) # stores winding number around each vertex, as well as lowest power to normalize
     monomial_array = [(0, 0)] * num
     tracePath(num, denom, path, loops, curr_state, monomial_array)
     # handle endpoint
-    if num < denom: curr_state.wind_r -= 1 # denom > num doesn't occur but it would loop around endpoint first
-    store_monomial(monomial_array, curr_state, num - 1, 1) # parity = 1: RH is to wall
-    if num >= denom: curr_state.wind_r -= 1 
+    if denom % 2 == 0: 
+        curr_state.increment_r(-1) # loop around endpoint first
+        idx = 0
+        parity = -1
+    else:
+        idx = num - 1
+        parity = 1
+    store_monomial(monomial_array, curr_state, idx, parity) # parity = 1: RH is to wall
+    if denom % 2 == 1: curr_state.increment_r(-1) 
     # walk backwards
     tracePath(num, denom, list(reversed(path)), list(reversed(loops)), curr_state, monomial_array)
     # done!
@@ -81,13 +92,16 @@ def geoJonesKnot(num, denom):
     return jones_polynomial
     
     
-print(geoJonesKnot(3,1).as_expr())   # works!
-print(geoJonesKnot(19,11).as_expr()) # works!
+print(geoJonesKnot(17, 4).as_expr())
+print(geoJonesKnot(5,2).as_expr())   # works!
+# print(AlgJonesKnot(3,1).as_expr())
+# print(geoJonesKnot(19,11).as_expr()) # works!
+# print(AlgJonesKnot(19,11).as_expr())
 
 
 
-# for i in range(30):
-#     for j in range(30):
+# for i in range(50):
+#     for j in range(50):
 #         if i < j: continue
 #         if i % 2 == 0 or j % 2 == 0: continue
 #         if gcd(i, j) > 1: continue
@@ -97,5 +111,6 @@ print(geoJonesKnot(19,11).as_expr()) # works!
 #                 if k % 2 == 1:
 #                     skip = True
 #         if skip: continue
-#         print(f"Jones polynomial of K_{{{i}/{j}}}:")
-#         print(geoJonesKnot(i, j).as_expr())
+#         if(geoJonesKnot(i, j) == AlgJonesKnot(i, j)):
+#             print(f"True {{{i}/{j}}}:")
+#         else: print(f"False {{{i}/{j}}}:")
