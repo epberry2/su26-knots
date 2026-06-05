@@ -14,18 +14,20 @@ R = Matrix([
     [-q**-1,-q**-2]
 ])
 
-def AlgBracket(u,v):
-    cfrac = continuedfrac(u,v)
+def AlgBracket(num,denom):
+    cfrac = continuedfrac(num,denom)
     cfrac.reverse()
     v = Matrix([[0],[1]])
     par = 0
 
     for k in cfrac:
         if par == 0:
-            v = (T ** k) * v
+            for _ in range(k):
+                v = T * v
 
         else:
-            v = (R ** k) * v
+            for _ in range(k):
+                v = R * v
 
         par = 1 - par
     v = v.applyfunc(sp.expand)
@@ -60,3 +62,4 @@ def AlgJonesKnot(u,v):
         jones_poly *= sp.Poly(-1, q)
     return jones_poly
 
+print(AlgBracket(5,1))

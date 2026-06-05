@@ -138,5 +138,3 @@ def JonesKnotGeoTwist(num,denom):
     jones = (q**(-min_power) * jones).expand()
 
     return sp.Poly(jones, q)
-
-print(GeoJonesKnot(9,4))
