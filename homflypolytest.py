@@ -19,7 +19,7 @@ def normalize(expr):
     min_a = min(term.as_coeff_exponent(a)[1] for term in terms)
 
     normalized = Poly(expand(cancel(expr / (q**min_q * a**min_a))), q, a)
-    if (homflyToJones(normalized)(1) == -1):
+    if (homflyToAlexander(normalized)(1) == -1):
         normalized *= Poly(-1, q)
     return normalized
 
@@ -54,8 +54,13 @@ def homflyToJones(homfly_polynomial):
     jones_polynomial = Poly(jones_polynomial.as_expr() * q ** (-lowest_jones_power), q)
     return jones_polynomial
 
+def homflyToAlexander(homfly_polynomial):
+    alexander_polynomial = Poly(homfly_polynomial.as_expr().subs(a, 1), q)
+    lowest_alexander_power = min(exp[0] for exp in alexander_polynomial.monoms())
+    alexander_polynomial = Poly(alexander_polynomial.as_expr() * q ** (-lowest_alexander_power), q)
+    return alexander_polynomial
 
 
-u, v = 201, 47
+# u, v = 201, 47
 
-test(u, v)
+# test(u, v)
