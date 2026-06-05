@@ -20,3 +20,6 @@ def continuedfrac(a, b):
         num -= (c * denom)
         parity = 1 - parity
     return X
+
+# something
+print("hello")
