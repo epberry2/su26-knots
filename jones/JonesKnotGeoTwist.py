@@ -1,8 +1,8 @@
-import findloops as fl
+import helpers.findloops as fl
 import sympy as sp
 from collections import defaultdict
-from GeoJonesKnot import geoJonesKnot
-from JonesPolyAlg import AlgJonesKnot
+from jones.GeoJonesKnot import geoJonesKnot
+from jones.JonesPolyAlg import AlgJonesKnot
 
 q = sp.symbols("q")
 

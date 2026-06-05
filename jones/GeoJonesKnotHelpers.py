@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from JonesBracketGeoHelpers import rotateCCW
+from jones.JonesBracketGeoHelpers import rotateCCW
 
 @dataclass
 class LoopWalkState:

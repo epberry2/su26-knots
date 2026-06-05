@@ -1,5 +1,5 @@
 from collections import defaultdict
-from tanglestate import get_state
+from helpers.tanglestate import get_state
 
 def findpath(num, denom):
     tupleslist = []

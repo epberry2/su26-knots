@@ -1,4 +1,4 @@
-from continuedfrac import continuedfrac
+from helpers.continuedfrac import continuedfrac
 
 class TangleState():
     def __init__(self):

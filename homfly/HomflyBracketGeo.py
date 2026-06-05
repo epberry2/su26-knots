@@ -1,7 +1,7 @@
-import findloops as fl
+import helpers.findloops as fl
 import sympy as sp
-from tanglestate import get_state
-from JonesBracketGeoHelpers import *
+from helpers.tanglestate import get_state
+from jones.JonesBracketGeoHelpers import *
 
 q = sp.symbols("q")
 a = sp.symbols("a")

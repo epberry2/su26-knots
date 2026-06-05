@@ -1,10 +1,10 @@
-from findloops import findloops
-from findloops import findpath
-from findloops import findpathwithloops
+from helpers.findloops import findloops
+from helpers.findloops import findpath
+from helpers.findloops import findpathwithloops
 from sympy import symbols, Poly, gcd
-from JonesPolyAlg import AlgBracket, AlgJonesKnot
-from JonesBracketGeoHelpers import *
-from tanglestate import get_state
+from jones.JonesPolyAlg import AlgBracket, AlgJonesKnot
+from jones.JonesBracketGeoHelpers import *
+from helpers.tanglestate import get_state
 
 q = symbols('q')
 

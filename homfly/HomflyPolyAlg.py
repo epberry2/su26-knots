@@ -1,6 +1,6 @@
 from sympy import Matrix, symbols
 import sympy as sp
-from continuedfrac import continuedfrac
+from helpers.continuedfrac import continuedfrac
 
 q = symbols('q')
 a = symbols('a')

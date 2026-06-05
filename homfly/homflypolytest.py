@@ -1,8 +1,8 @@
-from HomflyPolyAlg import AlgHomKnot
-from GeoHomflyKnot import geoHomflyKnot
+from homfly.HomflyPolyAlg import AlgHomKnot
+from homfly.GeoHomflyKnot import geoHomflyKnot
 from sympy import expand, simplify, symbols, together, cancel, Poly
 from numpy import gcd
-from tanglestate import get_state
+from helpers.tanglestate import get_state
 
 q = symbols('q')
 a = symbols('a')

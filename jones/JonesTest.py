@@ -2,9 +2,9 @@ import sympy as sp
 import math
 from itertools import permutations
 
-import JonesPolyAlg as jpa
-import JonesPolyGeo as jpg
-import JonesKnotGeoTwist as jpgt
+import jones.JonesPolyAlg as jpa
+import jones.JonesBracketGeo as jpg
+import jones.JonesKnotGeoTwist as jpgt
 
 
 def coprime_pairs(n):
@@ -19,7 +19,7 @@ def test_bracket(n):
     pairs = coprime_pairs(n)
     for i, j in pairs:
         va = jpa.AlgBracket(i, j)
-        vb = jpg.JonesPolyGeo(i, j)
+        vb = jpg.JonesBracketGeo(i,j)
 
         correct = va[0] == vb[0] or -va[0] == vb[0] and va[1] == vb[1] or -va[1] == vb[1]
         print(f"({i}, {j}): {correct}")
@@ -35,7 +35,7 @@ def test_knot(n):
     num_correct = 0
     for i in range(1,n):
         va = jpa.AlgJonesKnot(n, i)
-        vb = jpgt.GeoJonesKnot(n, i)
+        vb = jpgt.geoJonesKnot(n, i)
         correct = va == vb or va == -vb
         print(f"({n}, {i}): {correct}")
         if correct:
