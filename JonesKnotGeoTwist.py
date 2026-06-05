@@ -1,10 +1,12 @@
 import findloops as fl
 import sympy as sp
 from collections import defaultdict
+from GeoJonesKnot import geoJonesKnot
+from JonesPolyAlg import AlgJonesKnot
 
 q = sp.symbols("q")
 
-def GeoJonesKnot(num,denom):
+def JonesKnotGeoTwist(num,denom):
     u = num - denom # take inverse top twist, so u/v = (u-v)/v
     v = denom
     path, loops = fl.findpathwithloops(u, v)
@@ -137,4 +139,4 @@ def GeoJonesKnot(num,denom):
 
     return sp.Poly(jones, q)
 
-print(GeoJonesKnot(5,3))
+print(GeoJonesKnot(9,4))
