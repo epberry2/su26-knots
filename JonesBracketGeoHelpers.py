@@ -32,6 +32,7 @@ class tangleRotateState:
             case _:
                 self.quarter_loops[path_type_index(path_type)] += 2 if is_ccw else -2
                 self.total_loops += 1       
+                
     def powers(self):
         match self.poly_type:
             case "J":

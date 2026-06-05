@@ -120,6 +120,6 @@ def JonesKnotGeoTwist(num,denom):
 
     return sp.Poly(jones, q)
 
-print(JonesKnotGeoTwist(17, 4). as_expr())
-print(geoJonesKnot(17,4).as_expr())
-print(AlgJonesKnot(17,4).as_expr())
+print(JonesKnotGeoTwist(9, 4).as_expr())
+print(geoJonesKnot(9,4).as_expr())
+print(AlgJonesKnot(9,4).as_expr())
