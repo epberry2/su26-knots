@@ -24,7 +24,7 @@ R = Matrix([
     [-a, 0, 0, 0, 0, 0],
     [q, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, -q**2, 0],
-    [0, 0, 0, 0, 1, 1]
+    [0, 0, 0, 0, q, 1]
 ])
 
 
@@ -52,7 +52,19 @@ def AlgBracketHom(num,denom):
 def AlgHomKnot(num,denom):
     v = AlgBracketHom(num,denom)
     x = Matrix([[((a * q**-1) - (a**-1 * q)) / (q - q**-1)],[(a - a**-1)/(q-q**-1)],[1],[(a - a**-1)/(q-q**-1)],[0],[0]])
+    x = Matrix([
+        [squiggle(-1)], 
+        [squiggle(0)], 
+        [1],
+        [squiggle(0)],
+        [0],
+        [0]
+    ])
     homfly_poly = v.dot(x)
     return homfly_poly.simplify().expand()
 
-print(AlgHomKnot(5,2))
+def squiggle(n):
+    return (a * q ** (n) - a ** (-1) * q ** (-n)) / (q - q ** (-1))
+
+def quantum(N):
+    return (q ** N - q ** (-N)) / (q - q **(-1))
