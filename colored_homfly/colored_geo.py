@@ -47,7 +47,7 @@ def colored_homfly_geo(num, denom, j):
     path, loops = findpathwithloops(num, denom)
     points_config = get_state(num, denom)[1]
     graph = defaultdict(list)
-    bases_dicts = [defaultdict(int)] * (j + 1) # creates a list of dictionaries mapping powers to coefficients (a,q) -> k
+    bases_dicts = [defaultdict(int) for _ in range(j+1)] # creates a list of dictionaries mapping powers to coefficients (a,q) -> k
     parities = {}
     parity = 1
     for curr_point, next_point, path_type in zip(path, path[1:], loops):
@@ -59,21 +59,21 @@ def colored_homfly_geo(num, denom, j):
     min_m = min(m for m, n in values.values())
     min_n = min(n for m, n in values.values())
 
-    
+    ab = 0
     for key, (m, n) in values.items():
         total_sign = math.prod(parities.get(x, 1) for x in key) # compute sign of tuple
         
         # split tuple into right and left (i_1,...,i_k) -> (i_1,...,i_r), (i_r+1,...,i_k)
         split = find_split(key, num)
-        left = key[:split+1]
-        right = key[split+1:]
-        #print(split)       
-        compute_permutation_powers(left, right, (m - min_m,n - min_n), bases_dicts[split], total_sign)
-    
+        left = key[:split]
+        right = key[split:]
+
+        compute_permutation_powers(left, right, (m - min_m,n - min_n), bases_dicts[split], total_sign)  
     homfly = []
     for i in range(j + 1):
         homfly.append(Poly(dict(bases_dicts[i]), (a,q)))
     
+    homfly.reverse()
     return homfly
     
 def find_split(point, num):
@@ -215,7 +215,7 @@ def compute_permutation_powers(t1, t2, start_value, p_counter, sgn):
                 visited.add((next_t1, curr_t2))
                 
                 # Calculate the new power by swapping 2 points at a time
-                new_pow = curr_pow + sign(val_i - val_j) * 2
+                new_pow = curr_pow - sign(val_i - val_j) * 2
                 
                 # Add q^new_pow to our polynomial p
                 p_counter[(start_value[0], new_pow)] += sgn
@@ -240,7 +240,7 @@ def compute_permutation_powers(t1, t2, start_value, p_counter, sgn):
                 visited.add((curr_t1, next_t2))
                 
                 # Calculate the new power by swapping 2 points at a time
-                new_pow = curr_pow + sign(val_i - val_j) * 2
+                new_pow = curr_pow - sign(val_i - val_j) * 2
                 
                 # Add q^new_pow to our polynomial p
                 p_counter[(start_value[0], new_pow)] += sgn
@@ -259,7 +259,7 @@ def sorted_and_offset(t: tuple[int, ...]) -> tuple[tuple[int, ...], int]:
                 inv += 1                    # calculate how many inversions
     return tuple(sorted(t)), 2 * inv        # with inv inversions, n(t) - n(sorted(t)) = 2 * inv
 
-print(two_colored_geo(3, 1))
+#print(two_colored_geo(5, 2))
 # should print (a**6*q**2 - a**4*q**8 + 2*a**4*q**4 - a**4 + a**2*q**12 - 2*a**2*q**10 - a**2*q**8 + 4*a**2*q**6 - a**2*q**4 - 2*a**2*q**2 + a**2, -a**3*q**5 + a**3*q**3 + a*q**11 - 2*a*q**9 + 2*a*q**5 - a*q**3, q**12 - q**10 - q**8 + q**6)
 # (unless it shouldn't...)
-print(colored_homfly_geo(3, 1, 2))
+print(colored_homfly_geo(5, 2, 7))
