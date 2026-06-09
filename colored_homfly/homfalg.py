@@ -369,8 +369,8 @@ def print_collected_coefficients(collected, j):
 if __name__ == "__main__":
     # Change these three numbers to test different examples.
     j = 2
-    num = 4
-    denom = 3
+    num = 5
+    denom = 2
 
     frac, cf, word = word_from_fraction(num, denom)
 
