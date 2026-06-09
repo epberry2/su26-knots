@@ -59,56 +59,57 @@ def colored_homfly_geo(num, denom, j):
     
     # TODO: figure out coefficients from values dict
     
-    
-    
 
 def add_arc(graph, num, denom, p1, p2, path_type, points_config, j = 2): # defaults to 2-colored case
     match path_type:
-        case "L":
+        case "L": # L loop flips around point on left. m_weight, n_weight are the resp. weights of that point.
             m_weight = 2 if points_config[0] == "X+" else 0
             n_weight = 2 - (4 * j) if points_config[0] == "X+" else 2
-            if p1 < p2:
-                for indices in combinations_with_replacement(range(1, num + 1), j - 1):
-                    add_relation(graph, (p1,) + indices, (p2,) + indices, m_weight, n_weight) # (p1,) is a 1-tuple
-            else:
-                for indices in combinations_with_replacement(range(1, num + 1), j - 1):
-                    add_relation(graph, (p1,) + indices, (p2,) + indices, -m_weight, -n_weight)
+            for indices in combinations_with_replacement(range(1, num + 1), j - 1):
+                add_relation(
+                    graph,
+                    (p1,) + indices,    # (p1,) is a 1-tuple
+                    (p2,) + indices,  
+                    m_weight if p1 < p2 else -m_weight, 
+                    n_weight if p1 < p2 else -n_weight,
+                ) 
         case "C":
             m_weight = 2 if points_config[1] == "X+" else 0
             n_weight = 2 - (4 * j) if points_config[1] == "X+" else 2
-            if p1 < p2:
-                for indices in combinations_with_replacement(range(1, num + 1), j - 1):
-                    add_relation(graph, indices + (p1,), indices + (p2,), -m_weight, n_weight)
-            else:
-                for indices in combinations_with_replacement(range(1, num + 1), j - 1):
-                    add_relation(graph, indices + (p1,), indices + (p2,), m_weight, n_weight)
+            for indices in combinations_with_replacement(range(1, num + 1), j - 1):
+                add_relation(
+                    graph,
+                    indices + (p1,),
+                    indices + (p2,), 
+                    -m_weight if (p1 < p2) ^ (num < denom) else m_weight, 
+                    -n_weight if (p1 < p2) ^ (num < denom) else n_weight,
+                )
         case "R":
             m_weight = 2 if points_config[2] == "X+" else 0
             n_weight = 2 - (4 * j) if points_config[2] == "X+" else 2
-            if p1 < p2:
-                for indices in combinations_with_replacement(range(num + 1, num + denom + 1), j - 1):
-                    add_relation(graph, indices + (p1,), indices + (p2,), -m_weight, -n_weight)
-            else:
-                for indices in combinations_with_replacement(range(num + 1, num + denom + 1), j - 1):
-                    add_relation(graph, indices + (p1,), indices + (p2,), m_weight, n_weight)
+            for indices in combinations_with_replacement(range(num + 1, num + denom + 1), j - 1):
+                add_relation(
+                    graph,
+                    indices + (p1,),
+                    indices + (p2,), 
+                    -m_weight if p1 < p2 else m_weight, 
+                    -n_weight if p1 < p2 else n_weight,
+                )
         case "T":
             m_weight = 1 if points_config[1] == "X+" else 0
             n_weight = 1 - (2 * j) if points_config[1] == "X+" else 1
-            if p1 < p2:
-                for i in range(j):
-                    for left_indices in combinations_with_replacement(range(1, num + 1), i):
-                        for right_indices in combinations_with_replacement(range(num + 1, num + denom + 1), j - i - 1):
-                            add_relation(graph, left_indices + (p1,) + right_indices,
-                                            left_indices + (p2,) + right_indices, m_weight, n_weight)
-            else:
-                for i in range(j):
-                    for left_indices in combinations_with_replacement(range(1, num + 1), i):
-                        for right_indices in combinations_with_replacement(range(num + 1, num + denom + 1), j - i - 1):
-                            add_relation(graph, left_indices + (p1,) + right_indices,
-                                            left_indices + (p2,) + right_indices, -m_weight, -n_weight)
+            for i in range(j):
+                for left_indices in combinations_with_replacement(range(1, num + 1), i):
+                    for right_indices in combinations_with_replacement(range(num + 1, num + denom + 1), j - i - 1):
+                        add_relation(
+                            graph,
+                            left_indices + (p1,) + right_indices,
+                            left_indices + (p2,) + right_indices, 
+                            m_weight if p1 < p2 else -m_weight,
+                            n_weight if p1 < p2 else -n_weight,
+                        )
 
-
-def add_relation(graph, u, v, m_weight, n_weight, j = 2): # u, v = tuple, j = 2. #(u) - #(v) = weight
+def add_relation(graph, u, v, m_weight, n_weight, j = 2): # u, v = tuple, #(u) - #(v) = weight
     u_sorted, u_offset = sorted_and_offset(u)
     v_sorted, v_offset = sorted_and_offset(v)
     new_n_weight = v_offset + n_weight - u_offset
