@@ -1,5 +1,6 @@
 from helpers.findloops import findpathwithloops
 from helpers.tanglestate import get_state
+import helpers.closure_formulas as cf
 from functools import cache
 from collections import defaultdict, deque, Counter
 from sympy import symbols, Poly
@@ -44,6 +45,9 @@ def two_colored_geo(num, denom):
     return coeff_2_2, coeff_2_1, coeff_2_0
 
 def colored_homfly_geo(num, denom, j):
+    """
+    return list with 0-weight basis element first
+    """
     path, loops = findpathwithloops(num, denom)
     points_config = get_state(num, denom)[1]
     graph = defaultdict(list)
@@ -72,8 +76,6 @@ def colored_homfly_geo(num, denom, j):
     homfly = []
     for i in range(j + 1):
         homfly.append(Poly(dict(bases_dicts[i]), (a,q)))
-    
-    homfly.reverse()
     return homfly
     
 def find_split(point, num):
@@ -262,4 +264,4 @@ def sorted_and_offset(t: tuple[int, ...]) -> tuple[tuple[int, ...], int]:
 #print(two_colored_geo(5, 2))
 # should print (a**6*q**2 - a**4*q**8 + 2*a**4*q**4 - a**4 + a**2*q**12 - 2*a**2*q**10 - a**2*q**8 + 4*a**2*q**6 - a**2*q**4 - 2*a**2*q**2 + a**2, -a**3*q**5 + a**3*q**3 + a*q**11 - 2*a*q**9 + 2*a*q**5 - a*q**3, q**12 - q**10 - q**8 + q**6)
 # (unless it shouldn't...)
-print(colored_homfly_geo(5, 2, 7))
+

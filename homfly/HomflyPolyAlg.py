@@ -1,6 +1,7 @@
 from sympy import Matrix, symbols
 import sympy as sp
 from helpers.continuedfrac import continuedfrac
+from helpers.quantum_nums import *
 
 q = symbols('q')
 a = symbols('a')
@@ -62,9 +63,3 @@ def AlgHomKnot(num,denom):
     ])
     homfly_poly = v.dot(x)
     return homfly_poly.simplify().expand()
-
-def squiggle(n):
-    return (a * q ** (n) - a ** (-1) * q ** (-n)) / (q - q ** (-1))
-
-def quantum(N):
-    return (q ** N - q ** (-N)) / (q - q **(-1))

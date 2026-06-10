@@ -34,6 +34,7 @@ class TangleState():
 
 # Returns the permutation of [Y, X-, X+] given tau_(u/v)
 def get_state(u,v):
+    "Returns (orientation, points)"
     x = continuedfrac(u,v)
     tangle = TangleState()
     x.reverse()

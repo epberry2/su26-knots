@@ -30,6 +30,7 @@ from dataclasses import dataclass
 from fractions import Fraction
 from math import gcd
 from typing import Dict, List, Tuple, Optional
+from helpers.quantum_nums import *
 
 import sympy as sp
 
@@ -258,36 +259,6 @@ def apply_orientation_word(word: str, start: str = "UP") -> str:
 # Quantum algebra helpers
 # ============================================================
 
-def qbinom(n: int, k: int, base: sp.Expr) -> sp.Expr:
-    """
-    Gaussian binomial coefficient [n choose k]_base.
-    """
-    if k < 0 or k > n:
-        return sp.Integer(0)
-
-    num = sp.Integer(1)
-    den = sp.Integer(1)
-
-    for i in range(1, k + 1):
-        num *= 1 - base ** (n - k + i)
-        den *= 1 - base ** i
-
-    return sp.factor(sp.simplify(num / den))
-
-
-def qpochhammer(x: sp.Expr, base: sp.Expr, n: int) -> sp.Expr:
-    """
-    (x; base)_n = product_{i=0}^{n-1} (1 - x base^i).
-    """
-    if n < 0:
-        raise ValueError("Pochhammer length must be nonnegative")
-
-    out = sp.Integer(1)
-
-    for i in range(n):
-        out *= 1 - x * base**i
-
-    return sp.factor(sp.simplify(out))
 
 
 # ============================================================
@@ -327,7 +298,7 @@ def twist_terms_unexpanded(
                 coeff = (
                     (-q) ** h
                     * q ** (k * k)
-                    * qbinom(h, k, q**2)
+                    * qbinom_unshifted(h, k, q**2)
                 )
                 out.append(("UP", h, sp.factor(sp.simplify(coeff))))
 
@@ -338,7 +309,7 @@ def twist_terms_unexpanded(
                     (-q) ** h
                     * a ** k
                     * q ** (k * (k - 2 * j))
-                    * qbinom(h, k, q**2)
+                    * qbinom_unshifted(h, k, q**2)
                 )
                 out.append(("RI", h, sp.factor(sp.simplify(coeff))))
 
@@ -349,7 +320,7 @@ def twist_terms_unexpanded(
                     (-q) ** h
                     * a ** h
                     * q ** (h * (h - 2 * j))
-                    * qbinom(h, k, q**2)
+                    * qbinom_unshifted(h, k, q**2)
                 )
                 out.append(("OP", h, sp.factor(sp.simplify(coeff))))
 
@@ -365,7 +336,7 @@ def twist_terms_unexpanded(
                     (-q) ** h
                     * a ** h
                     * q ** (k * (2 * j - k) - 2 * h * j)
-                    * qbinom(j - h, k - h, q**-2)
+                    * qbinom_unshifted(j - h, k - h, q**-2)
                 )
                 out.append(("OP", h, sp.factor(sp.simplify(coeff))))
 
@@ -376,7 +347,7 @@ def twist_terms_unexpanded(
                     (-q) ** h
                     * a ** k
                     * q ** (-k * k)
-                    * qbinom(j - h, k - h, q**-2)
+                    * qbinom_unshifted(j - h, k - h, q**-2)
                 )
                 out.append(("UP", h, sp.factor(sp.simplify(coeff))))
 
@@ -386,7 +357,7 @@ def twist_terms_unexpanded(
                 coeff = (
                     (-q) ** h
                     * q ** (-k * (k - 2 * j))
-                    * qbinom(j - h, k - h, q**-2)
+                    * qbinom_unshifted(j - h, k - h, q**-2)
                 )
                 out.append(("RI", h, sp.factor(sp.simplify(coeff))))
 
@@ -553,7 +524,7 @@ def closure_TUP(j: int, k: int) -> sp.Expr:
     expr = (
         (-q) ** k
         * q ** (2 * k * k)
-        * qbinom(j, k, q**2)
+        * qbinom_unshifted(j, k, q**2)
         * qpochhammer(a**2 * q ** (2 - 2 * j - 2 * k), q**2, k)
         / qpochhammer(q**2, q**2, k)
     )
@@ -574,7 +545,7 @@ def closure_TRI(j: int, k: int) -> sp.Expr:
         (-q) ** (k - j)
         * a ** (2 * (k - j))
         * q ** (2 * (k - j) ** 2)
-        * qbinom(j, k, q**2)
+        * qbinom_unshifted(j, k, q**2)
         * qpochhammer(a**2 * q ** (2 - 2 * j - 2 * r), q**2, r)
         / qpochhammer(q**2, q**2, r)
     )
@@ -804,7 +775,7 @@ if __name__ == "__main__":
     # Change these three numbers to test.
     num = 3
     denom = 1
-    j = 3
+    j = 2
 
     # Tangle evaluation of tau_{num/denom}.
     ev = evaluate_tangle_matrix(num, denom, j, verbose=False)
