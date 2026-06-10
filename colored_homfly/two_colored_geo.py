@@ -174,5 +174,5 @@ def sorted_and_offset(t: tuple[int, ...]) -> tuple[tuple[int, ...], int]:
                 inv += 1                    # calculate how many inversions
     return tuple(sorted(t)), 2 * inv        # with inv inversions, n(t) - n(sorted(t)) = 2 * inv
 
-print(two_colored_geo(5, 2))
-print(colored_homfly_geo(5, 2, 2))
+# print(two_colored_geo(5, 2))
+# print(colored_homfly_geo(5, 2, 7))
