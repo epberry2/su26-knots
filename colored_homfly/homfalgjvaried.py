@@ -255,11 +255,6 @@ def apply_orientation_word(word: str, start: str = "UP") -> str:
     return orient
 
 
-# ============================================================
-# Quantum algebra helpers
-# ============================================================
-
-
 
 # ============================================================
 # Twist coefficients and matrices
