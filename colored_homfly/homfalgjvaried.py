@@ -925,9 +925,9 @@ def smoke_test() -> None:
 
 if __name__ == "__main__":
     # Change these three numbers to test.
-    num = 5
+    num = 3
     denom = 1
-    j = 2
+    j = 1
 
     # Tangle evaluation of tau_{num/denom}.
     ev = evaluate_tangle_matrix(num, denom, j, verbose=False)
