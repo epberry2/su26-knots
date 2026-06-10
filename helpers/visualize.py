@@ -10,9 +10,12 @@ def visualize_lattice(polynomial):
     p_dict = polynomial.as_dict()
     keys = p_dict.keys()
     x, y = zip(*keys)
-    plt.scatter(x, y)
+    z = p_dict.values()
+    scatter = plt.scatter(x, y, c=z, cmap='viridis', s=100, edgecolor='black')
     plt.xlabel('q powers')
     plt.ylabel('a powers')
+    colorbar = plt.colorbar(scatter)
+    colorbar.set_label('coefficient of monomial')
     plt.title('Lattice points of Homfly Polynomial')
     plt.show()
     
