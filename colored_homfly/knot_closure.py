@@ -15,4 +15,6 @@ def colored_homfly_knot(num, denom, j):
     homfly = 0
     for k in range(len(tangle_homfly)):
         homfly += tangle_homfly[k].as_expr() * cf.cl_num(orientation, j, k)
-    return normalize_laurent_2var(homfly, a, q)
+    return normalize_laurent_2var(homfly, a, q) 
+
+# print(colored_homfly_knot(3, 1, 3))
