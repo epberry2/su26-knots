@@ -31,6 +31,7 @@ from fractions import Fraction
 from math import gcd
 from typing import Dict, List, Tuple, Optional
 from helpers.quantum_nums import *
+from helpers.plot_polynomial import *
 
 import sympy as sp
 
@@ -643,6 +644,44 @@ def closure_polynomial_matrix(
 
 
 # ============================================================
+# Polynomial exponent plot
+# ============================================================
+
+
+def print_polynomial_lattice_points(poly: sp.Expr) -> None:
+    """Print the exponent points of a Laurent polynomial."""
+    points = polynomial_lattice_points(poly)
+
+    print("\nPolynomial lattice points:")
+    print("q exponent, a exponent, coefficient, monomial")
+
+    for q_exp, a_exp, coeff, monomial in points:
+        print(f"({q_exp}, {a_exp}), coeff = {coeff}, monomial = {monomial}")
+
+
+
+
+
+def plot_closure_lattice_points(
+    out: ClosureEvaluation,
+    *,
+    save_path: Optional[str] = None,
+    show: bool = True,
+    label_coefficients: bool = True,
+) -> List[Tuple[sp.Expr, sp.Expr, sp.Expr, sp.Expr]]:
+    """Plot the exponent points of a ClosureEvaluation output."""
+    title = f"Monomial support for {out.num}/{out.denom}, j={out.j}"
+
+    return plot_polynomial_lattice_points(
+        out.expanded_value,
+        title=title,
+        save_path=save_path,
+        show=show,
+        label_coefficients=label_coefficients,
+    )
+
+
+# ============================================================
 # Printing helpers
 # ============================================================
 
@@ -770,14 +809,24 @@ if __name__ == "__main__":
     # Change these three numbers to test.
     num = 3
     denom = 1
-    j = 2
+    j = 5
 
     # Tangle evaluation of tau_{num/denom}.
     ev = evaluate_tangle_matrix(num, denom, j, verbose=False)
-    print_tangle_summary(ev)
+    # print_tangle_summary(ev)
 
     # Numerator closure value of Cl(tau_{num/denom}).
-    closure_polynomial_matrix(num, denom, j, verbose=False, show_inner=True)
+    out = closure_polynomial_matrix(num, denom, j, verbose=False, show_inner=False)
+
+    # Plot every monomial coeff*q^m*a^n as the point (m,n).
+    # The plot is saved, and show=True also opens a window in a normal Python environment.
+    # print_polynomial_lattice_points(out.expanded_value)
+    plot_closure_lattice_points(
+        out,
+        save_path=f"homfly_points_{num}_{denom}_j{j}.png",
+        show=True,
+        label_coefficients=True,
+    )
 
     # Uncomment for sanity checks.
     # smoke_test()

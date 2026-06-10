@@ -22,6 +22,7 @@ def visualize_lattice(polynomial, path=None, show_plot=True):
     if show_plot:
         plt.show()
     
+    
 
 #polynomial = sp.Poly(colored_homfly_knot(3, 1, 2), q, a)
 #visualize_lattice(polynomial)

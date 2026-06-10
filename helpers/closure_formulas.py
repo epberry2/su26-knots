@@ -24,12 +24,27 @@ def cl_num(orientation, j, k):
             
 
 def cl_denom(orientation, j, k):
-    "Denominator closure not implemented"
-    raise NotImplementedError
+    "Denominator closure"
+    match orientation:
+        case "OP":
+            out_num = q**(k**2)
+            out_denom = a**k
+            out_num *= qnums.qpochhammer(a**2 * q**(2 - 2 * j), q**2, k)
+            out_denom *= qnums.qpochhammer(q**2, q**2, k)
+            return sp.factor(sp.simplify(out_num * qnums.qbinom(j, k) / out_denom))
+        case "RI":
+            out_num = q**(j**2 + (j - k)**2)
+            out_denom = a**j
+            out_num *= qnums.qpochhammer(a**2 * q**(2 - 4 * j + 2 * k), q**2, j)
+            out_denom *= qnums.qpochhammer(q**2, q**2, j)
+            return sp.factor(sp.simplify(out_num * qnums.qbinom(j, k) / out_denom))
+        case _:
+            raise TypeError("Orientation not OP or RI")
 
 def cl_t_twist(orientation, j, k):
     """
     If orientation == "UP", returns Cl(TUP[j, k])
+    
     If orientation == "RI", returns Cl(TRI[j, k])
     """
     match orientation:
