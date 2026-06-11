@@ -22,7 +22,6 @@ def cl_num(orientation, j, k):
         case _:
             raise TypeError("Orientation not UP or OP")
             
-
 def cl_denom(orientation, j, k):
     "Denominator closure"
     match orientation:
