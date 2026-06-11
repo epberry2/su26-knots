@@ -5,6 +5,7 @@ from colored_homfly.colored_alg import closure_polynomial_matrix, evaluate_tangl
 from colored_homfly.colored_geo import colored_homfly_geo
 from colored_homfly.knot_closure import colored_homfly_knot
 from helpers.normalize_laurent import normalize_laurent_2var
+from helpers.tanglestate import get_state
 
 a = sp.symbols('a')
 q = sp.symbols('q')
@@ -28,6 +29,12 @@ def test_multiple(knots, n):
     correct = 0
     total_knots = len(knots) * n
     for knot in knots:
+        state = get_state(knot[0], knot[1])
+        if state[0] == "RI":
+            print("")
+            print(f"Cannot close tangle, skipping {(knot[0], knot[1])}")
+            total_knots -= n
+            continue
         for i in range(1,n+1):
             x = test_jcolor_polynomial(knot[0], knot[1], i)
             print(x)
@@ -37,18 +44,10 @@ def test_multiple(knots, n):
     print("")
     print(f"Testing completed in {end - begin:.2f} seconds")
     print(f"{correct} knots match out of {total_knots}")
-    print(f"{correct // total_knots * 100}% accuracy")
 
-knots = [(19, 17), (7, 1)]
+
+knots = [(3, 1), (7, 3)]
 test_multiple(knots, 3)
 
 
-
-
-
-
-
-
-
-#print(geo == alg)
 
