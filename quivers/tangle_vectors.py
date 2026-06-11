@@ -1,9 +1,7 @@
-import sympy as sp
 from helpers.findloops import findpathwithloops
 from jones.JonesBracketGeoHelpers import rotateCCW
 from helpers.tanglestate import get_state
 
-q, a = sp.symbols("q a")
 
 def tangle_vectors(u, v):
     "Returns (s_vec, a_vec)"
@@ -29,3 +27,7 @@ def tangle_vectors(u, v):
 
 def s_delta_terms(num, i, j):
     return int(i <= num and j > num) - int(i > num and j <= num)
+
+def q_delta_terms(num, points, i, x_w):
+    if points[1] != "X+": return 0
+    return s_delta_terms(num, i, x_w)

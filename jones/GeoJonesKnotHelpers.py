@@ -41,7 +41,10 @@ class LoopWalkState:
                 self.lowest_m_power = min(self.lowest_m_power, m_pow)
                 self.lowest_n_power = min(self.lowest_n_power, n_pow)
                 return m_pow, n_pow
-        
+    
+    def quiver_diag_term(self):
+        return (self.winding_nums[self.x_minus_idx] + self.winding_nums[self.y_idx]
+                    - 2 * self.winding_nums[self.x_plus_idx])
 
 def store_monomial(monomials, state, index, parity):
     if state.poly_type == "H": parity *= -1
@@ -57,7 +60,7 @@ def intersection_index(num, denom, point, next_point, path_type, parity):
         raise ValueError(f"Only intersect at C or R arcs")
     return index + int(parity == 1) # We walk with RH to wall, so on right iff parity = 1
 
-def tracePath(num, denom, path, loops, state, monomial_array):
+def tracePath(num, denom, path, loops, state, monomial_array = [], store_array = True):
     for point, next_point, path_type in zip(path, path[1:], loops):   # fancy for loop
         is_ccw = rotateCCW(num, denom, point, next_point, path_type)
         parity = -1 if (point > next_point) ^ (path_type == "C") else 1
@@ -68,15 +71,15 @@ def tracePath(num, denom, path, loops, state, monomial_array):
                 if is_ccw:
                     state.increment_c(-1) # increment beforehand
                     intersection_num = intersection_index(num, denom, point, next_point, path_type, parity)
-                    store_monomial(monomial_array, state, intersection_num, parity)
+                    if store_array: store_monomial(monomial_array, state, intersection_num, parity)
                 else:
                     intersection_num = intersection_index(num, denom, point, next_point, path_type, parity)
-                    store_monomial(monomial_array, state, intersection_num, parity)
+                    if store_array: store_monomial(monomial_array, state, intersection_num, parity)
                     state.increment_c(1) # increment aftwerwards
             case "R":
                 intersection_num = intersection_index(num, denom, point, next_point, path_type, parity)
                 if not is_ccw: # increment beforehand
                     state.increment_r(1)
-                store_monomial(monomial_array, state, intersection_num, parity)
+                if store_array: store_monomial(monomial_array, state, intersection_num, parity)
                 if is_ccw: # increment afterwards
                     state.increment_r(-1)

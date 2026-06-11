@@ -81,25 +81,24 @@ def findpathwithloops(num, denom):
     return path, pathwithloops
 
 
-def findloops(num, denom, start, end):
+def findpathwithloops_sector(num, denom, start, end):
     path = findpath(num, denom)
-    startbeforeend = True
-    index = 0
-    for i in range(len(path)):
-        if path[i] == end:
-            startbeforeend = False
-        if path[i] == start:
-            index = i
-            break
+    index = path.index(start)
+    end_idx = path.index(end)
+    startbeforeend = index < end_idx
     loops = []
+    path_block = [path[index]]
     if startbeforeend:
         iter = 1
     else:
         iter = -1
+    print(f"end: {end}")
     while path[index] != end:
         nextindex = index + iter
         cur = path[index]
+        print(nextindex)
         nxt = path[nextindex]
+        path_block.append(nxt)
         index += iter
         if cur > num and nxt > num:
             if num > denom or cur + nxt == denom + (2 * num) + 1:
@@ -114,6 +113,6 @@ def findloops(num, denom, start, end):
             loops.append("L")
             continue
         loops.append("C")
-    return loops
+    return path_block, loops
 
 # print(findpathwithloops(3, 1))
