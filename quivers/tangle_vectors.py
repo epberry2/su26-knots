@@ -19,7 +19,7 @@ def tangle_vectors(u, v):
             if (path_type, x_plus_index) in (("L", 0), ("C", 1), ("R", 2)):
                 curr_wind_x_plus += 1
         s_vec[curr_point - 1] = curr_wind_total + s_delta_terms(u, curr_point, x_omega)
-        a_vec[curr_point - 1] = 2 * curr_wind_x_plus + (s_delta_terms if x_plus_index == 1 else 0)
+        a_vec[curr_point - 1] = 2 * curr_wind_x_plus + (s_delta_terms(u, curr_point, x_omega) if x_plus_index == 1 else 0)
         # idx -= 1
         # s_vec[idx] = curr_wind + delta_terms(u, curr_point, x_omega)
         # for his notation
@@ -31,3 +31,5 @@ def s_delta_terms(num, i, j):
 def q_delta_terms(num, points, i, x_w):
     if points[1] != "X+": return 0
     return s_delta_terms(num, i, x_w)
+
+print(tangle_vectors(5, 2))
