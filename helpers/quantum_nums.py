@@ -10,22 +10,6 @@ def squiggle(n):
 def quantum(N):
     return (q ** N - q ** (-N)) / (q - q **(-1))
 
-def qbinom_unshifted(n: int, k: int, base: sp.Expr) -> sp.Expr:
-    """
-    Gaussian binomial coefficient [n choose k]_base.
-    """
-    if k < 0 or k > n:
-        return sp.Integer(0)
-
-    num = sp.Integer(1)
-    den = sp.Integer(1)
-
-    for i in range(1, k + 1):
-        num *= 1 - base ** (n - k + i)
-        den *= 1 - base ** i
-
-    return sp.factor(sp.simplify(num / den))
-
 def qbinom(n: int, k: int) -> sp.Expr:
     """
     return shifted binomial
