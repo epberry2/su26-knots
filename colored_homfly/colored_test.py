@@ -1,11 +1,15 @@
 import sympy as sp
 import time
+import numpy as np
 
 from colored_homfly.colored_alg import closure_polynomial_matrix, evaluate_tangle_vector
 from colored_homfly.colored_geo import colored_homfly_geo
 from colored_homfly.knot_closure import colored_homfly_knot
 from helpers.normalize_laurent import normalize_laurent_2var
 from helpers.tanglestate import get_state
+from quivers.tangle_quiver import quiver
+from quivers.tangle_vectors import tangle_vectors
+from quivers.evaluate_quiver import evaluate_quiver
 
 a = sp.symbols('a')
 q = sp.symbols('q')
@@ -47,7 +51,16 @@ def test_multiple(knots, n):
 
 
 knots = [(3, 1), (7, 3)]
-test_multiple(knots, 3)
+#test_multiple(knots, 3)
 
+knot = (5, 2)
 
+Q = quiver(knot[0], knot[1])
+S, A = tangle_vectors(knot[0], knot[1])
+Q_numpy = np.array(Q.tolist(), dtype=int)
+
+quiv = evaluate_quiver(Q_numpy, S, A, knot[0], knot[1], 2)
+geo = colored_homfly_geo(knot[0], knot[1], 2)
+print(quiv)
+print(geo)
 
