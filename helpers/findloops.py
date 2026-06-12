@@ -92,11 +92,9 @@ def findpathwithloops_sector(num, denom, start, end):
         iter = 1
     else:
         iter = -1
-    print(f"end: {end}")
     while path[index] != end:
         nextindex = index + iter
         cur = path[index]
-        print(nextindex)
         nxt = path[nextindex]
         path_block.append(nxt)
         index += iter

@@ -32,4 +32,4 @@ def q_delta_terms(num, points, i, x_w):
     if points[1] != "X+": return 0
     return s_delta_terms(num, i, x_w)
 
-print(tangle_vectors(5, 2))
+# print(tangle_vectors(5, 2))

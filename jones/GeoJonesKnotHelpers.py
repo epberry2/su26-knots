@@ -44,7 +44,7 @@ class LoopWalkState:
     
     def quiver_diag_term(self):
         return (self.winding_nums[self.x_minus_idx] + self.winding_nums[self.y_idx]
-                    - 2 * self.winding_nums[self.x_plus_idx])
+                    - 3 * self.winding_nums[self.x_plus_idx])
 
 def store_monomial(monomials, state, index, parity):
     if state.poly_type == "H": parity *= -1

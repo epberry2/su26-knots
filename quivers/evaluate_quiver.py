@@ -3,6 +3,8 @@ import numpy as np
 from itertools import combinations
 from collections import defaultdict
 from helpers.quantum_nums import qmultinom
+from quivers.tangle_quiver import quiver
+from helpers.normalize_laurent import normalize_laurents_2var
 
 q = sp.symbols('q')
 a = sp.symbols('a')
@@ -42,7 +44,7 @@ def evaluate_quiver(Q, S, A, u, v, j):
         bases_polys[weight] += a**p2 * (-q)**p1 * q**p3 * multi_nom
     for i in range(len(bases_polys)):
         bases_polys[i] = sp.expand(sp.simplify(bases_polys[i]))
-    return bases_polys
+    return normalize_laurents_2var(bases_polys)
 
 Q = np.array([[1, 1, 0, 0],
               [1, 2, 0, 0],
@@ -51,4 +53,5 @@ Q = np.array([[1, 1, 0, 0],
 S = [2, 3, 1, 0]
 A = [0, 0, 0, 0]
 p = evaluate_quiver(Q, S, A, 3, 1, 2)
-print(p)
+
+# print(p)

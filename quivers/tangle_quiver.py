@@ -17,13 +17,15 @@ def quiver(num, denom):
         tracePath(num, denom, path_a, loops_a, state, store_array = False)
         Q[a-1, a-1] = state.quiver_diag_term() + -2 * q_delta_terms(num, points_, a, x_w)
         for b in range(1, a):
-            entry = Q[a-1, a-1] + writhe_of_path(num, denom, b, a)
+            writhe = writhe_of_path(num, denom, b, a)
+            q_diag = Q[a-1, a-1]
+            entry = q_diag + writhe
             a_b_path, a_b_loops = findpathwithloops_sector(num, denom, b, a)
             wind_x_plus = 0
             for curr_point, next_point, path_type in zip(a_b_path, a_b_path[1:], a_b_loops):
                 if (x_plus_idx, path_type) in ((0, "L"), (1, "C"), (2, "R")):
-                    wind_x_plus += 1 if rotateCCW(num, denom, curr_point, next_point, path_type) else -1
-            entry -= 2 * wind_x_plus
+                    wind_x_plus -= 1 if rotateCCW(num, denom, curr_point, next_point, path_type) else -1
+            entry -= 3 * wind_x_plus
             entry += q_delta_terms(num, points_, a, x_w)
             Q[a-1, b-1] = entry
             Q[b-1, a-1] = entry
@@ -75,4 +77,8 @@ def writhe_of_path(num, denom, j, i):
                     on_left = not on_left
     return writhe
 
-# print(quiver(3, 1))
+
+
+
+
+sp.pprint(quiver(5, 2))
