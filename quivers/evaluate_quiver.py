@@ -44,7 +44,7 @@ def evaluate_quiver(Q, S, A, u, v, j):
         bases_polys[weight] += a**p2 * (-q)**p1 * q**p3 * multi_nom
     for i in range(len(bases_polys)):
         bases_polys[i] = sp.expand(sp.simplify(bases_polys[i]))
-    return normalize_laurents_2var(bases_polys)
+    return normalize_laurents_2var(bases_polys, a, q)
 
 Q = np.array([[1, 1, 0, 0],
               [1, 2, 0, 0],

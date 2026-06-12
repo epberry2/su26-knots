@@ -25,7 +25,7 @@ def quiver(num, denom):
             for curr_point, next_point, path_type in zip(a_b_path, a_b_path[1:], a_b_loops):
                 if (x_plus_idx, path_type) in ((0, "L"), (1, "C"), (2, "R")):
                     wind_x_plus -= 1 if rotateCCW(num, denom, curr_point, next_point, path_type) else -1
-            entry -= 3 * wind_x_plus
+            entry -= 2 * wind_x_plus
             entry += q_delta_terms(num, points_, a, x_w)
             Q[a-1, b-1] = entry
             Q[b-1, a-1] = entry
