@@ -25,7 +25,7 @@ def writhe_list(num, denom):
     path, loops = findpathwithloops(num, denom)
     writhe_list = [[0, 0, 0] for _ in range(num)]
     writhe_counter = [0, 0, 0]
-    permute = (1, 2 if orientation == "UP" else 0, 0 if orientation == "UP" else 1)
+    permute = (1, 2 if orientation == "UP" else 0, 0 if orientation == "UP" else 2)
     for curr_point, next_point, path_type in zip(path, path[1:], loops):
         add_arc(writhe_list, num, denom, curr_point, next_point, path_type, writhe_counter, permute)
     match orientation:
