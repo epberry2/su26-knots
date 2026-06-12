@@ -26,7 +26,7 @@ def quiver(num, denom):
                 if (x_plus_idx, path_type) in ((0, "L"), (1, "C"), (2, "R")):
                     wind_x_plus -= 1 if rotateCCW(num, denom, curr_point, next_point, path_type) else -1
             entry -= 2 * wind_x_plus
-            entry += q_delta_terms(num, points_, a, x_w)
+            entry += q_delta_terms(num, points_, a, b)
             Q[a-1, b-1] = entry
             Q[b-1, a-1] = entry
     return Q
@@ -80,5 +80,4 @@ def writhe_of_path(num, denom, j, i):
 
 
 
-
-sp.pprint(quiver(5, 2))
+# sp.pprint(quiver(5, 2))

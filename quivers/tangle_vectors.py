@@ -28,8 +28,8 @@ def tangle_vectors(u, v):
 def s_delta_terms(num, i, j):
     return int(i <= num and j > num) - int(i > num and j <= num)
 
-def q_delta_terms(num, points, i, x_w):
+def q_delta_terms(num, points, i, j):
     if points[1] != "X+": return 0
-    return s_delta_terms(num, i, x_w)
+    return s_delta_terms(num, i, j)
 
 # print(tangle_vectors(5, 2))

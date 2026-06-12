@@ -66,7 +66,7 @@ quiv = evaluate_quiver(Q_numpy, S, A, knot[0], knot[1], 2)
 geo = colored_homfly_geo(knot[0], knot[1], 2)
 
 
-for term in normalize_laurents_2var(quiv, a, q):
-    print(term)
-for term in geo:
-    print(term.as_expr())
+# for term in normalize_laurents_2var(quiv, a, q):
+#     print(term)
+# for term in geo:
+#     print(term.as_expr())
