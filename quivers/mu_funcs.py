@@ -44,5 +44,4 @@ def mus(u, v):
             tangle.r_twist()
             pos = False
 
-    print(mus(3,1))
     return mu1, mu2, mu3
