@@ -17,17 +17,32 @@ def mus(u, v):
                         mu2 += 1
                         mu3 -= 1
                 case "RI":
-                    
+                    if pos:
+                        mu1 += 1
+                        mu2 += 1
+                        mu3 -= 1
+                      
             tangle.t_twist()
             pos = True
         else:
             match tangle.orient:
                 case "UP":
+                    mu1 -= 1
+                    mu2 -= 1
+                    mu3 += 1
                     
                 case "OP":
-                    
+                    if pos:
+                        mu1 -= 1
+                        mu2 -= 1
+                        mu3 += 1
+
                 case "RI":
-                    
+                    if pos:
+                        mu3 -= 1
+
             tangle.r_twist()
             pos = False
+
+    print(mus(3,1))
     return mu1, mu2, mu3
