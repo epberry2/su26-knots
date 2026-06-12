@@ -4,7 +4,8 @@ from itertools import combinations
 from collections import defaultdict
 from helpers.quantum_nums import qmultinom
 from quivers.tangle_quiver import quiver
-from helpers.normalize_laurent import normalize_laurents_2var
+from quivers.tangle_vectors import tangle_vectors
+from helpers.normalize_laurent import normalize_laurent_2var, normalize_laurents_2var
 
 q = sp.symbols('q')
 a = sp.symbols('a')
@@ -29,7 +30,7 @@ def get_tuples(k, n):
 
 
 def evaluate_quiver(Q, S, A, u, v, j):
-    # Evaluates the j colored homfly polynomial from the quiver
+    # Evaluates the j colored homfly polynomial from the quiver tangle
     S = np.array(S)
     A = np.array(A)
     bases_polys = [0 for _ in range(j+1)]
@@ -46,12 +47,32 @@ def evaluate_quiver(Q, S, A, u, v, j):
         bases_polys[i] = sp.expand(sp.simplify(bases_polys[i]))
     return normalize_laurents_2var(bases_polys, a, q)
 
-Q = np.array([[1, 1, 0, 0],
-              [1, 2, 0, 0],
-              [0, 0, 0, 0],
-              [0, 0, 0, 0]])
-S = [2, 3, 1, 0]
-A = [0, 0, 0, 0]
-p = evaluate_quiver(Q, S, A, 3, 1, 2)
+def evaluate_quiver_knot(Q, S, A, u, v, j):
+    # Evaluates the j colored homfly polynomial from the quiver knot
+    S = np.array(S)
+    A = np.array(A)
+    homfly = 0
+    combos = get_tuples(u, j)
+    for d in combos:        
+        d = np.array(d)
+        p1 = np.dot(S, d)
+        p2 = np.dot(A, d)
+        p3 = np.einsum('i,ij,j', d, Q, d)
+        multi_nom = qmultinom(d.sum(), list(d))
+        homfly += a**p2 * (-q)**p1 * q**p3 * multi_nom
+
+    return normalize_laurent_2var(homfly, a, q)
+
+knot = (5, 2)
+
+Q = quiver(knot[0], knot[1])
+
+S, A = tangle_vectors(knot[0], knot[1])
+
+Q_numpy = np.array(Q.tolist(), dtype=int)
+
+quiv = evaluate_quiver(Q_numpy, S, A, knot[0], knot[1], 2)
+
+
 
 # print(p)
