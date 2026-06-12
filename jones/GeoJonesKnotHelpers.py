@@ -51,7 +51,8 @@ def store_monomial(monomials, state, index, parity):
     if state.arc_right: parity *= -1
     monomials[index] = (parity, *state.powers())
     
-def intersection_index(num, denom, point, next_point, path_type, parity):
+def intersection_index(num, denom, point, next_point, path_type):
+    parity = -1 if (point > next_point) ^ (path_type == "C") else 1
     if path_type == "C":
         index = 2 * (min(point, next_point) - 1) + int(denom % 2 == 0)
     elif path_type == "R":
@@ -70,14 +71,14 @@ def tracePath(num, denom, path, loops, state, monomial_array = [], store_array =
             case "C":
                 if is_ccw:
                     state.increment_c(-1) # increment beforehand
-                    intersection_num = intersection_index(num, denom, point, next_point, path_type, parity)
+                    intersection_num = intersection_index(num, denom, point, next_point, path_type)
                     if store_array: store_monomial(monomial_array, state, intersection_num, parity)
                 else:
-                    intersection_num = intersection_index(num, denom, point, next_point, path_type, parity)
+                    intersection_num = intersection_index(num, denom, point, next_point, path_type)
                     if store_array: store_monomial(monomial_array, state, intersection_num, parity)
                     state.increment_c(1) # increment aftwerwards
             case "R":
-                intersection_num = intersection_index(num, denom, point, next_point, path_type, parity)
+                intersection_num = intersection_index(num, denom, point, next_point, path_type)
                 if not is_ccw: # increment beforehand
                     state.increment_r(1)
                 if store_array: store_monomial(monomial_array, state, intersection_num, parity)
