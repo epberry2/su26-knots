@@ -79,5 +79,4 @@ def writhe_of_path(num, denom, j, i):
 
 
 
-
 # sp.pprint(quiver(5, 2))

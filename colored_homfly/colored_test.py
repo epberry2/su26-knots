@@ -53,7 +53,7 @@ def test_multiple(knots, n):
 knots = [(3, 1), (7, 3)]
 #test_multiple(knots, 3)
 
-knot = (5, 2)
+knot = (7, 5)
 
 Q = quiver(knot[0], knot[1])
 
@@ -67,6 +67,7 @@ geo = colored_homfly_geo(knot[0], knot[1], 2)
 
 
 # for term in normalize_laurents_2var(quiv, a, q):
-#     print(term)
+#     print(f"term {term}")
+# print("geo")
 # for term in geo:
-#     print(term.as_expr())
+#     print(f"term {term.as_expr()}")
