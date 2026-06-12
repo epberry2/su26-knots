@@ -16,12 +16,12 @@ def mus(u, v):
                         mu1 += 1
                         mu2 += 1
                         mu3 -= 1
-                case "RI":
-                    if pos:
+                    else:
                         mu1 += 1
-                        mu2 += 1
-                        mu3 -= 1
-                      
+                case "RI":
+                    mu1 += 1
+                    mu2 += 1
+                    mu3 -= 1
             tangle.t_twist()
             pos = True
         else:
@@ -36,12 +36,12 @@ def mus(u, v):
                         mu1 -= 1
                         mu2 -= 1
                         mu3 += 1
-
+                    else:
+                        mu1 -= 1
+                        mu2 -= 1
+                        mu3 += 1
                 case "RI":
-                    if pos:
-                        mu3 -= 1
-
+                    mu3 -= 1
             tangle.r_twist()
             pos = False
-
     return mu1, mu2, mu3

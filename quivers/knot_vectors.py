@@ -3,12 +3,11 @@ from collections import defaultdict
 from jones.JonesBracketGeoHelpers import rotateCCW
 from jones.GeoJonesKnotHelpers import intersection_index
 from helpers.tanglestate import get_state
+from quivers.mu_funcs import mus
 
 def knot_vectors(u, v):
     writhes = writhe_list(u, v)
-    mu1 = 0
-    mu2 = 0
-    mu3 = 0
+    mu1, mu2, mu3 = mus(u, v)
     
     s_vec = [0] * u
     a_vec = [0] * u
@@ -62,3 +61,4 @@ def add_arc(writhe_list, num, denom, curr_point, next_point, path_type, writhe_c
             writhe_list[intersection_point] = writhe_counter.copy()
             writhe_counter[permute[2]] -= 2 if rotateCCW(num, denom, curr_point, next_point, path_type) else 0
 
+print(knot_vectors(7, 5))
