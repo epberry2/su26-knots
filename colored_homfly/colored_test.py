@@ -25,7 +25,7 @@ def test_jcolor_polynomial(u, v, j, times=True):
     alg = normalize_laurent_2var(closure_polynomial_matrix(u, v, j), a, q)
     t3 = time.perf_counter()
     if times:
-        print(f"Alg computation took {t3 - t1:.6f} seconds")
+        print(f"Alg computation took {t3 - t2:.6f} seconds")
     return alg == geo
 
 def test_multiple(knots, n):
@@ -50,24 +50,35 @@ def test_multiple(knots, n):
     print(f"{correct} knots match out of {total_knots}")
 
 
-knots = [(3, 1), (7, 3)]
-#test_multiple(knots, 3)
+def test_quiver(u, v, j, times=True):
+    print("")
+    print(f"Testing {(u, v, j)} knot")
 
-knot = (7, 5)
+    t1 = time.perf_counter()
+    geo = colored_homfly_geo(u, v, j)
+    t2 = time.perf_counter()
 
-Q = quiver(knot[0], knot[1])
+    if times:
+        print(f"Geo computation took {t2 - t1:.6f} seconds")
+    
+    Q = quiver(u,v)
+    S, A = tangle_vectors(u,v)
+    tq = time.perf_counter()
+    if times:
+        print(f"Computing quiver took {tq - t2:.6f} seconds")
+    Q_numpy = np.array(Q.tolist(), dtype=int)    
+    quiv = normalize_laurents_2var(evaluate_quiver(Q_numpy, S, A, u, v, j), a, q)
+    t3 = time.perf_counter()
+    if times:
+        print(f"Evaluating quiver took {t3 - tq:.6f} seconds")
+    for i in range(j):
+        if geo[i].as_expr() != quiv[i]:
+            print(geo[i].as_expr())
+            print(quiv[i])
+            return False
+    return True
 
-S, A = tangle_vectors(knot[0], knot[1])
+print(test_jcolor_polynomial(7, 5, 3))
 
-Q_numpy = np.array(Q.tolist(), dtype=int)
-
-quiv = evaluate_quiver(Q_numpy, S, A, knot[0], knot[1], 2)
-
-geo = colored_homfly_geo(knot[0], knot[1], 2)
-
-
-# for term in normalize_laurents_2var(quiv, a, q):
-#     print(f"term {term}")
-# print("geo")
-# for term in geo:
-#     print(f"term {term.as_expr()}")
+# knots = [(3, 1), (7, 3)]
+# test_multiple(knots, 3)

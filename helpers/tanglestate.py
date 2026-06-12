@@ -1,4 +1,5 @@
 from helpers.continuedfrac import continuedfrac
+from typing import List
 
 class TangleState():
     def __init__(self):
@@ -51,4 +52,16 @@ def get_state(u,v):
         par = 1 - par
     return (tangle.orient, tangle.points)
 
-# print(get_state(5,2))
+def cf_to_chronological_word(cf: List[int]) -> str:
+    """
+    e.g. [1, 2, 2] -> TTRRT
+    """
+    blocks: List[str] = []
+    
+    for i, power in enumerate(cf):
+        if power < 0:
+            raise ValueError("Only nonnegative continued fraction entries are supported.")
+        op = "T" if i % 2 == 0 else "R"
+        blocks.append(op * power)
+
+    return "".join(reversed(blocks))
