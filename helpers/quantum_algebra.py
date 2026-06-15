@@ -84,10 +84,3 @@ class QuantumCombinatorics:
             else:
                 terms.append(f"{coeff if coeff > 1 else ''}q^{power}")
         return " + ".join(terms) if terms else "0"
-
-import time
-t1 = time.perf_counter()
-qc = QuantumCombinatorics()
-poly_array = qc.q_multinomial(25, [1, 2, 2, 20])
-t2 = time.perf_counter()
-print(len(poly_array), t2 - t1)
