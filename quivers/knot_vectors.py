@@ -61,4 +61,4 @@ def add_arc(writhe_list, num, denom, curr_point, next_point, path_type, writhe_c
             writhe_list[intersection_point] = writhe_counter.copy()
             writhe_counter[permute[2]] -= 2 if rotateCCW(num, denom, curr_point, next_point, path_type) else 0
 
-print(knot_vectors(7, 5))
+# print(knot_vectors(7, 5))

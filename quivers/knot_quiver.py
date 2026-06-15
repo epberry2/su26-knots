@@ -1,31 +1,35 @@
-from knot_vectors import knot_vectors
+from quivers.knot_vectors import knot_vectors
 from helpers.findloops import findpathwithloops
 from jones.JonesBracketGeoHelpers import rotateCCW
 from jones.GeoJonesKnotHelpers import intersection_index
 from helpers.tanglestate import get_state
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Set
+import sympy as sp
 
 
-
-
-def winds(u, v):
-    path, loops = findpathwithloops(u, v)
-    
-    states = [[0] * u for _ in range(u)]
-    for curr_point, next_point, path_type in zip(path, path[1:], loops):
-        "Unfinished"
-        
+def knot_quiver(u, v):
+    winder = winding_tracker(u, v)
+    winder.trace_path()
+    Q = sp.Matrix.zeros(u, u)
+    q_diag = knot_vectors(u, v)[2]
+    for i in range(u):
+        Q[i, i] = q_diag[i]
+        for j in range(i):
+            Q[i, j] = Q[i, i] + winder.wind_diag(j, i) - 2 * winder.wind_x_plus(j, i)
+            Q[j, i] = Q[i, j]
+    return Q
         
 @dataclass
 class winding_tracker:
     num: int
     denom: int
-    diag_winds: List[List[int]]
-    x_plus_states: List[int]
-    orientation: str
-    has_hit: Set[int] = set()
+    diag_winds: List[List[int]] = field(init = False)
+    x_plus_states: List[int] = field(init = False)
+    orientation: str = field(init = False)
+    has_hit: Set[int] = field(default_factory=set)
     curr_x_plus: int = 0
+    
     def __post_init__(self):
         self.diag_winds = [[0] * self.num for _ in range(self.num)]
         self.x_plus_states = [0] * self.num
@@ -47,12 +51,17 @@ class winding_tracker:
             case "C":
                 intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
                 self.curr_x_plus -= 1 if is_ccw else -1
+
                 for j in self.has_hit:
                     for i in range(intersect):
                         if i not in self.has_hit:
                             self.diag_winds[j][i] -= 2 if is_ccw else -2
+                            if (i, j) == (1, 0):
+                                print(f"(curr_p, next_p, path) = ({curr_point}, {next_point}, {path_type}")
+
                 self.x_plus_states[intersect] = self.curr_x_plus
                 self.has_hit.add(intersect)
+
                 self.curr_x_plus -= 1 if is_ccw else -1
             case "T":
                 if self.orientation == "OP":
@@ -61,6 +70,29 @@ class winding_tracker:
                     for i in range(self.num):
                         if i not in self.has_hit:
                             self.diag_winds[j][i] -= 1 if curr_point > self.num else -1
+                            if (i, j) == (1, 0):
+                                print(f"(curr_p, next_p, path) = ({curr_point}, {next_point}, {path_type}")
+                                print(1 if curr_point > self.num else -1)
+    def turn_around_CW(self):
+        match self.orientation:
+            case "UP":
+                self.curr_x_plus += 2
+                self.x_plus_states[self.num - 1] = self.curr_x_plus
+                self.has_hit.add(self.num - 1)
+            case "OP":
+                self.curr_x_plus += 1
+                self.x_plus_states[0] = self.curr_x_plus
+                self.has_hit.add(0)
+                self.curr_x_plus += 1
+                
+    def trace_path(self):
+        path, loops = findpathwithloops(self.num, self.denom)
+        for curr_point, next_point, path_type in zip(path, path[1:], loops):
+            self.step(curr_point, next_point, path_type)
+        self.turn_around_CW()
+        for curr_point, next_point, path_type in zip(reversed(path), reversed(path[:-1]), reversed(loops)):
+            self.step(curr_point, next_point, path_type)
+    
     def wind_diag(self, j, i):
         if j > i:
             raise ValueError("j must be less than i")
@@ -69,3 +101,7 @@ class winding_tracker:
         if j > i:
             raise ValueError("j must be less than i")
         return (self.x_plus_states[i] - self.x_plus_states[j]) // 2
+    
+    
+    
+sp.pprint(knot_quiver(3, 1))
