@@ -44,7 +44,6 @@ class winding_tracker:
     def step(self, curr_point, next_point, path_type):
         is_cw = not rotateCCW(self.num, self.denom, curr_point, next_point, path_type)
         intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
-        print(curr_point, next_point, path_type, is_cw, intersect)
         match path_type:
             case "R":
                 if self.orientation == "UP" and is_cw: # CW loop goes around right point before hitting beta
