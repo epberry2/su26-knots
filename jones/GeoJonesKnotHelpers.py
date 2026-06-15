@@ -77,7 +77,7 @@ def intersection_index(num, denom, point, next_point, path_type):
         if higher_point > num + (denom // 2):
             return num # goes over all intersections
         index = 2 * (higher_point - 1 - num) + (num - denom)
-        parity = 1 if point > next_point else -1
+        parity = 1 if next_point > point else -1
     else:
         return -1 # left arc to left of all intersections
     return index + int(parity == 1) # We walk with RH to wall, so on right iff parity = 1
