@@ -21,6 +21,10 @@ def knot_quiver(u, v):
             j = path[idx_j]
             Q[i, j] = Q[i, i] + winder.wind_diag(j, i) - 2 * winder.wind_x_plus(j, i)
             Q[j, i] = Q[i, j]
+            if (i, j) == (4, 3):
+                print(Q[i, i])
+                print(winder.wind_diag(j, i))
+                print(winder.wind_x_plus(j, i))
     return Q
         
 @dataclass
@@ -48,14 +52,19 @@ class winding_tracker:
             case "R":
                 if self.orientation == "UP" and is_cw: # CW loop goes around right point before hitting beta
                     self.curr_x_plus += 2 
-                self.x_plus_states[intersect] = self.curr_x_plus
-                self.has_hit.add(intersect)
-                self.intersection_path.append(intersect)
+
                 # R loop passes under all the points to the right of intersect
                 for j in self.has_hit:
                     for i in range(intersect + 1, self.num):
                         if i not in self.has_hit:
                             self.diag_winds[j][i] += 1 if is_cw else -1
+                self.x_plus_states[intersect] = self.curr_x_plus
+                self.has_hit.add(intersect)
+                self.intersection_path.append(intersect)
+                if not is_cw: # R loop passes underneath rightward points after hitting intersection
+                    for i in range(intersect + 1, self.num):
+                        if i not in self.has_hit:
+                            self.diag_winds[intersect][i] -= 1
                 if self.orientation == "UP" and not is_cw: # CCW loop goes around right point after hitting beta 
                     self.curr_x_plus -= 2
             case "C":
@@ -111,5 +120,4 @@ class winding_tracker:
     def wind_x_plus(self, j, i):
         return (self.x_plus_states[i] - self.x_plus_states[j]) // 2
     
-    
-    
+sp.pprint(knot_quiver(5, 2))
