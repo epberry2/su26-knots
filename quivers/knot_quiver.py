@@ -113,4 +113,3 @@ class winding_tracker:
     
     
     
-sp.pprint(knot_quiver(5, 1))

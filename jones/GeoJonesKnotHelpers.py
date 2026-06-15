@@ -69,7 +69,7 @@ def intersection_index(num, denom, point, next_point, path_type):
     """
     parity = -1 if (point > next_point) ^ (path_type == "C") else 1
     if path_type == "C":
-        index = 2 * ((num // 2) - min(point, next_point)) + int(denom % 2 == 0)
+        index = 2 * (((num - denom) // 2) - min(point, next_point)) + int(denom % 2 == 0)
     elif path_type == "R":
         index = 2 * (min(point, next_point) - 1 - num) + (num - denom)
     elif path_type == "T": #return right intersection
