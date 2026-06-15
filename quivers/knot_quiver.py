@@ -20,8 +20,6 @@ def knot_quiver(u, v):
         for idx_j in range(idx_i):
             j = path[idx_j]
             Q[i, j] = Q[i, i] + winder.wind_diag(j, i) - 2 * winder.wind_x_plus(j, i)
-            if (i, j) == (0, 1):
-                print(f"wind_diag: {winder.wind_diag(j, i)}, wind_x_plus: {winder.wind_x_plus(j, i)}")
             Q[j, i] = Q[i, j]
     return Q
         
@@ -44,56 +42,55 @@ class winding_tracker:
             raise ValueError("RI orientation")
         
     def step(self, curr_point, next_point, path_type):
-        is_ccw = rotateCCW(self.num, self.denom, curr_point, next_point, path_type)
+        is_cw = not rotateCCW(self.num, self.denom, curr_point, next_point, path_type)
         intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
         match path_type:
             case "R":
-                if self.orientation == "UP":
-                    self.curr_x_plus -= 0 if is_ccw else -2
+                if self.orientation == "UP" and is_cw: # CW loop goes around right point before hitting beta
+                    self.curr_x_plus += 2 
                 self.x_plus_states[intersect] = self.curr_x_plus
                 self.has_hit.add(intersect)
                 self.intersection_path.append(intersect)
+                # R loop passes under all the points to the right of intersect
                 for j in self.has_hit:
                     for i in range(intersect + 1, self.num):
                         if i not in self.has_hit:
-                            self.diag_winds[j][i] -= 1 if is_ccw else -1
-                if self.orientation == "UP":
-                    self.curr_x_plus -= 2 if is_ccw else 0
+                            self.diag_winds[j][i] += 1 if is_cw else -1
+                if self.orientation == "UP" and not is_cw: # CCW loop goes around right point after hitting beta 
+                    self.curr_x_plus -= 2
             case "C":
                 if self.orientation == "OP":
-                    self.curr_x_plus -= 1 if is_ccw else -1
+                    self.curr_x_plus += 1 if is_cw else -1
                 for j in self.has_hit:
                     for i in range(intersect):
                         if i not in self.has_hit:
-                            self.diag_winds[j][i] -= 2 if is_ccw else -2
-                    if is_ccw:
+                            self.diag_winds[j][i] += 2 if is_cw else -2
+                    if not is_cw: # If γ_{j,i} ends with a CCW center loop, the writhe ends up decreasing by 1 due to the square.
                         self.diag_winds[j][intersect] -= 1
                 self.x_plus_states[intersect] = self.curr_x_plus
                 self.has_hit.add(intersect)
                 self.intersection_path.append(intersect)
                 for i in range(intersect):
                     if i not in self.has_hit:
-                        self.diag_winds[intersect][i] -= 1 if is_ccw else -1
-                self.curr_x_plus -= 1 if is_ccw else -1
+                        self.diag_winds[intersect][i] += 1 if is_cw else -1 # loops starting at intersection point only get half the writhe
+                self.curr_x_plus += 1 if is_cw else -1
+                
             case "T":
                 if self.orientation == "OP":
                     self.curr_x_plus -= 1 if curr_point > self.num else -1
                 for j in self.has_hit:
-                    for i in range(intersect):
+                    for i in range(intersect): # If the T arc is shortened, it only affects writhe where i is less than the intersection point to the right
                         if i not in self.has_hit:
                             self.diag_winds[j][i] -= 1 if curr_point > self.num else -1
-                            if (i, j) == (1, 0):
-                                print(f"(curr_p, next_p, path) = ({curr_point}, {next_point}, {path_type}")
-                                print(1 if curr_point > self.num else -1)
                                 
-    def turn_around_CW(self):
+    def turn_around_CW(self): # Will always turn CW because we walk with RH to wall
         match self.orientation:
-            case "UP":
+            case "UP": # Path ends on rightmost point
                 self.curr_x_plus += 2
                 self.x_plus_states[self.num - 1] = self.curr_x_plus
                 self.has_hit.add(self.num - 1)
                 self.intersection_path.append(self.num - 1)
-            case "OP":
+            case "OP": # Path ends on central point Z
                 self.curr_x_plus += 1
                 self.x_plus_states[0] = self.curr_x_plus
                 self.has_hit.add(0)

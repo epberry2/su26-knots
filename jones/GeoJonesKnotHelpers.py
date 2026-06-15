@@ -52,6 +52,21 @@ def store_monomial(monomials, state, index, parity):
     monomials[index] = (parity, *state.powers())
     
 def intersection_index(num, denom, point, next_point, path_type):
+    """
+    Inputs an arc on the loop. Assuming we walk with RH to tangle.
+    
+    If the arc is of C or R type, it intersects the beta arc.
+    Returns the 0-indexed point of intersection of the inputted arc.
+    
+    If the arc is of T type, it can be helpful to consider the extension
+    of the arc on the right until it hits beta. \\ 
+    In this case, the arc may loop around the right point, or be a "shortened
+    T arc" which crosses beta immediately to the right. \\
+    Returns num (to the right of all intersections) if not shortened,
+    or the index of the immediate rightward intersection if shortened.
+
+    If the arc is of L type, returns -1 (to the left of all intersections)
+    """
     parity = -1 if (point > next_point) ^ (path_type == "C") else 1
     if path_type == "C":
         index = 2 * (min(point, next_point) - 1) + int(denom % 2 == 0)
