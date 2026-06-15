@@ -57,8 +57,14 @@ def intersection_index(num, denom, point, next_point, path_type):
         index = 2 * (min(point, next_point) - 1) + int(denom % 2 == 0)
     elif path_type == "R":
         index = 2 * (min(point, next_point) - 1 - num) + (num - denom)
+    elif path_type == "T": #return right intersection
+        higher_point = point if point > next_point else next_point
+        if higher_point > num + (denom // 2):
+            return num # goes over all intersections
+        index = 2 * (higher_point - 1 - num) + (num - denom)
+        parity = 1 if point > next_point else -1
     else:
-        raise ValueError(f"Only intersect at C or R arcs")
+        return -1 # left arc to left of all intersections
     return index + int(parity == 1) # We walk with RH to wall, so on right iff parity = 1
 
 def tracePath(num, denom, path, loops, state, monomial_array = [], store_array = True):
