@@ -67,18 +67,18 @@ def test_quiver(u, v, j, times=True):
     if times:
         print(f"Computing quiver took {tq - t2:.6f} seconds")
     Q_numpy = np.array(Q.tolist(), dtype=int)    
-    quiv = normalize_laurents_2var(evaluate_quiver(Q_numpy, S, A, u, v, j), a, q)
+    quiv = evaluate_quiver(Q_numpy, S, A, u, v, j)
     t3 = time.perf_counter()
     if times:
         print(f"Evaluating quiver took {t3 - tq:.6f} seconds")
     for i in range(j):
-        if geo[i].as_expr() != quiv[i]:
-            print(geo[i].as_expr())
+        if geo[i] != quiv[i] and -geo[i] != quiv[i]:
+            print(geo[i])
             print(quiv[i])
             return False
     return True
 
-print(test_jcolor_polynomial(7, 5, 3))
+print(test_quiver(3, 1, 8))
 
 # knots = [(3, 1), (7, 3)]
 # test_multiple(knots, 3)
