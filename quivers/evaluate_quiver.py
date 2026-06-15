@@ -9,6 +9,7 @@ from helpers.normalize_laurent import normalize_laurent_2var, normalize_laurents
 from colored_homfly.knot_closure import colored_homfly_knot
 from colored_homfly.colored_geo import colored_homfly_geo
 from helpers.quantum_algebra import QuantumCombinatorics
+from helpers.quantum_nums import qmultinom
 
 q = sp.symbols('q')
 a = sp.symbols('a')
@@ -81,7 +82,7 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
         p3 = np.einsum('i,ij,j', d, Q, d)
         multinom = qc.q_multinomial(d.sum(), list(d))
         sign = (-1) ** (p1 % 2)
-        for i in len(multinom):
+        for i in range(len(multinom)):
             poly[(p2, p1+p3+(2*i))] += sign * multinom[i]
 
     min_a, min_q = map(min, zip(*poly))
@@ -90,6 +91,22 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
         for k, v in poly.items()
     }
     return sp.Poly(dict(normalized), (a, q))
+
+def evaluate_quiver_knot_old(Q, S, A, u, v, j):
+    # Evaluates the j colored homfly polynomial from the quiver knot
+    S = np.array(S)
+    A = np.array(A)
+    homfly = 0
+    combos = get_tuples(u, j)
+    for d in combos:        
+        d = np.array(d)
+        p1 = np.dot(S, d)
+        p2 = np.dot(A, d)
+        p3 = np.einsum('i,ij,j', d, Q, d)
+        multi_nom = qmultinom(d.sum(), list(d))
+        homfly += a**p2 * (-q)**p1 * q**p3 * multi_nom
+
+    return normalize_laurent_2var(homfly, a, q)
 
 '''
 knot = (5, 2)
