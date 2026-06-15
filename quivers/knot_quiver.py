@@ -1,5 +1,5 @@
 from quivers.knot_vectors import knot_vectors
-from helpers.findloops import findpathwithloops
+from helpers.findloops import findpathwithloops, findpath
 from jones.JonesBracketGeoHelpers import rotateCCW
 from jones.GeoJonesKnotHelpers import intersection_index
 from helpers.tanglestate import get_state
@@ -13,10 +13,15 @@ def knot_quiver(u, v):
     winder.trace_path()
     Q = sp.Matrix.zeros(u, u)
     q_diag = knot_vectors(u, v)[2]
-    for i in range(u):
+    path = winder.intersection_path
+    for idx_i in range(u):
+        i = path[idx_i]
         Q[i, i] = q_diag[i]
-        for j in range(i):
+        for idx_j in range(idx_i):
+            j = path[idx_j]
             Q[i, j] = Q[i, i] + winder.wind_diag(j, i) - 2 * winder.wind_x_plus(j, i)
+            if (i, j) == (0, 1):
+                print(f"wind_diag: {winder.wind_diag(j, i)}, wind_x_plus: {winder.wind_x_plus(j, i)}")
             Q[j, i] = Q[i, j]
     return Q
         
@@ -27,6 +32,7 @@ class winding_tracker:
     diag_winds: List[List[int]] = field(init = False)
     x_plus_states: List[int] = field(init = False)
     orientation: str = field(init = False)
+    intersection_path: List[int] = field(default_factory=list)
     has_hit: Set[int] = field(default_factory=set)
     curr_x_plus: int = 0
     
@@ -39,50 +45,59 @@ class winding_tracker:
         
     def step(self, curr_point, next_point, path_type):
         is_ccw = rotateCCW(self.num, self.denom, curr_point, next_point, path_type)
+        intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
         match path_type:
             case "R":
-                intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
                 if self.orientation == "UP":
                     self.curr_x_plus -= 0 if is_ccw else -2
                 self.x_plus_states[intersect] = self.curr_x_plus
                 self.has_hit.add(intersect)
+                self.intersection_path.append(intersect)
+                for j in self.has_hit:
+                    for i in range(intersect + 1, self.num):
+                        if i not in self.has_hit:
+                            self.diag_winds[j][i] -= 1 if is_ccw else -1
                 if self.orientation == "UP":
                     self.curr_x_plus -= 2 if is_ccw else 0
             case "C":
-                intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
-                self.curr_x_plus -= 1 if is_ccw else -1
-
+                if self.orientation == "OP":
+                    self.curr_x_plus -= 1 if is_ccw else -1
                 for j in self.has_hit:
                     for i in range(intersect):
                         if i not in self.has_hit:
                             self.diag_winds[j][i] -= 2 if is_ccw else -2
-                            if (i, j) == (1, 0):
-                                print(f"(curr_p, next_p, path) = ({curr_point}, {next_point}, {path_type}")
-
+                    if is_ccw:
+                        self.diag_winds[j][intersect] -= 1
                 self.x_plus_states[intersect] = self.curr_x_plus
                 self.has_hit.add(intersect)
-
+                self.intersection_path.append(intersect)
+                for i in range(intersect):
+                    if i not in self.has_hit:
+                        self.diag_winds[intersect][i] -= 1 if is_ccw else -1
                 self.curr_x_plus -= 1 if is_ccw else -1
             case "T":
                 if self.orientation == "OP":
                     self.curr_x_plus -= 1 if curr_point > self.num else -1
                 for j in self.has_hit:
-                    for i in range(self.num):
+                    for i in range(intersect):
                         if i not in self.has_hit:
                             self.diag_winds[j][i] -= 1 if curr_point > self.num else -1
                             if (i, j) == (1, 0):
                                 print(f"(curr_p, next_p, path) = ({curr_point}, {next_point}, {path_type}")
                                 print(1 if curr_point > self.num else -1)
+                                
     def turn_around_CW(self):
         match self.orientation:
             case "UP":
                 self.curr_x_plus += 2
                 self.x_plus_states[self.num - 1] = self.curr_x_plus
                 self.has_hit.add(self.num - 1)
+                self.intersection_path.append(self.num - 1)
             case "OP":
                 self.curr_x_plus += 1
                 self.x_plus_states[0] = self.curr_x_plus
                 self.has_hit.add(0)
+                self.intersection_path.append(0)
                 self.curr_x_plus += 1
                 
     def trace_path(self):
@@ -94,12 +109,9 @@ class winding_tracker:
             self.step(curr_point, next_point, path_type)
     
     def wind_diag(self, j, i):
-        if j > i:
-            raise ValueError("j must be less than i")
+        "j must come before i in intersection_path"
         return self.diag_winds[j][i]
     def wind_x_plus(self, j, i):
-        if j > i:
-            raise ValueError("j must be less than i")
         return (self.x_plus_states[i] - self.x_plus_states[j]) // 2
     
     
