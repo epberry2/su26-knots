@@ -73,8 +73,8 @@ class winding_tracker:
                 for i in range(intersect):
                     if i not in self.has_hit:
                         self.diag_winds[intersect][i] += 1 if is_cw else -1 # loops starting at intersection point only get half the writhe
-                self.curr_x_plus += 1 if is_cw else -1
-                
+                if self.orientation == "OP":
+                    self.curr_x_plus += 1 if is_cw else -1
             case "T":
                 if self.orientation == "OP":
                     self.curr_x_plus -= 1 if curr_point > self.num else -1
@@ -113,4 +113,4 @@ class winding_tracker:
     
     
     
-sp.pprint(knot_quiver(3, 1))
+sp.pprint(knot_quiver(5, 1))
