@@ -1,6 +1,5 @@
-from quivers.knot_vectors import knot_vectors
 import quivers.mu_funcs as mu_func
-from helpers.findloops import findpathwithloops, findpath
+from helpers.findloops import findpathwithloops
 from jones.JonesBracketGeoHelpers import rotateCCW
 from jones.GeoJonesKnotHelpers import intersection_index
 from helpers.tanglestate import get_state
