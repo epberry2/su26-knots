@@ -1,7 +1,10 @@
 from collections import defaultdict
 from helpers.tanglestate import get_state
+from math import gcd
 
 def findpath(num, denom):
+    if gcd(num, denom) > 1:
+        raise ValueError("gcd(num, denom) must equal 1")
     tupleslist = []
     for i in range(num // 2):
         tupleslist.append((1 + i, num - i))
