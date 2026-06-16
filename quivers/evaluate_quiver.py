@@ -101,7 +101,7 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
     return sp.Poly(dict(normalized), (a, q))
 
 def evaluate_quiver_jones(Q, H, u, v, j):
-    # Evaluates the j colored homfly polynomial given the K_(u/v) quiver
+    # Evaluates the j colored jones polynomial given the K_(u/v) quiver
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
     H = np.array(H)
@@ -110,13 +110,43 @@ def evaluate_quiver_jones(Q, H, u, v, j):
 
     for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):        
         d = np.array(d)
-        p1 = np.dot(H, d)        
+        p1 = np.dot(H, d)   
         p2 = np.einsum('i,ij,j', d, Q, d)
         multinom = qc.get_multinomial(d)
         sign = (-1) ** (p1 % 2)
         for i, coeff in enumerate(multinom):
             if coeff != 0:
-                poly[int(p1+p2+(2*i))] += int(sign * coeff)
+                poly[int(p1+p2-(2*i))] += int(sign * coeff)
+
+    # normalize polynomial so lowest powers are 0
+
+    min_value_key = min(poly)
+    normalized = {
+        k - min_value_key: val 
+        for k, val in poly.items()
+    }
+
+    return sp.Poly(dict(normalized), q)
+
+def evaluate_quiver_jones_from_homfly(Q, S, A, u, v, j):
+    # Evaluates the j colored jones polynomial given the K_(u/v) quiver (homfly quiver)
+    qc = QuantumCombinatorics() # creates cache for quantum multinomials
+    poly = defaultdict(int)
+    S = np.array(S)
+    A = np.array(A)
+    combos = get_tuples(u, j) # get all u-tuples with values adding up to j
+    combo_list = list(combos)
+
+    for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):        
+        d = np.array(d)
+        p1 = np.dot(-S, d)   
+        p2 = np.dot(2 * A, d)
+        p3 = np.einsum('i,ij,j', d, -Q, d)
+        multinom = qc.get_multinomial(d)
+        sign = (-1) ** (p1 % 2)
+        for i, coeff in enumerate(multinom):
+            if coeff != 0:
+                poly[int(p1+p2+p3-(2*i))] += int(sign * coeff)
 
     # normalize polynomial so lowest powers are 0
 
