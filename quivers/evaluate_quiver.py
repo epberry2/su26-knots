@@ -51,7 +51,7 @@ def evaluate_quiver(Q, S, A, u, v, j):
         p2 = np.dot(A, d)
         p3 = np.einsum('i,ij,j', d, Q, d)
         #multi_nom = qmultinom(weight, list(d[:u])) * qmultinom(j - weight, list(d[u:]))
-        multinom = qc._multiply_polynomials(qc.q_multinomial(weight, list(d[:u])), qc.q_multinomial(j - weight, list(d[u:])))
+        multinom = qc._multiply_polynomials(qc.get_multinomial(d[:u]), qc.get_multinomial(d[u:]))
         sign = (-1) ** (p1 % 2)
         
         for i in range(len(multinom)):
@@ -84,11 +84,39 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
         p1 = np.dot(S, d)        
         p2 = np.dot(A, d)
         p3 = np.einsum('i,ij,j', d, Q, d)
-        multinom = qc.q_multinomial(d.sum(), list(d))
+        multinom = qc.get_multinomial(d)
+        #multinom = qc.q_multinomial(d.sum(), list(d))
         sign = (-1) ** (p1 % 2)
         for i, coeff in enumerate(multinom):
             if coeff != 0:
                 poly[(p2, p1+p3+(2*i))] += sign * coeff
+
+    # normalize polynomial so lowest powers are 0
+    min_a, min_q = map(min, zip(*poly))
+    normalized = {
+        (k[0] - min_a, k[1] - min_q): v 
+        for k, v in poly.items()
+    }
+
+    return sp.Poly(dict(normalized), (a, q))
+
+def evaluate_quiver_jones(Q, H, u, v, j):
+    # Evaluates the j colored homfly polynomial given the K_(u/v) quiver
+    qc = QuantumCombinatorics() # creates cache for quantum multinomials
+    poly = defaultdict(int)
+    H = np.array(H)
+    combos = get_tuples(u, j) # get all u-tuples with values adding up to j
+    combo_list = list(combos)
+
+    for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):        
+        d = np.array(d)
+        p1 = np.dot(H, d)        
+        p2 = np.einsum('i,ij,j', d, Q, d)
+        multinom = qc.get_multinomial(d)
+        sign = (-1) ** (p1 % 2)
+        for i, coeff in enumerate(multinom):
+            if coeff != 0:
+                poly[p1+p2+(2*i)] += sign * coeff
 
     # normalize polynomial so lowest powers are 0
     min_a, min_q = map(min, zip(*poly))

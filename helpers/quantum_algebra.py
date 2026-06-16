@@ -2,6 +2,7 @@ class QuantumCombinatorics:
     def __init__(self):
         # Cache to store previously computed q-binomials: keys are (n, k)
         self.binomial_cache = {}
+        self.multinomial_cache = {}
 
     def _add_polynomials(self, p1, p2):
         """Element-wise addition of two polynomials."""
@@ -70,6 +71,12 @@ class QuantumCombinatorics:
             result = self._multiply_polynomials(result, binom)
             
         return result
+    
+    def get_multinomial(self, d):
+        d_tuple = tuple(sorted(d))
+        if d_tuple not in self.multinomial_cache:
+            self.multinomial_cache[d_tuple] = self.q_multinomial(sum(d), list(d))
+        return self.multinomial_cache[d_tuple]
 
     def format_polynomial(self, poly):
         """Helper to print the array as a readable mathematical string."""
