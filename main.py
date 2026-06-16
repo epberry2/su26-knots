@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 from helpers.visualize import visualize_lattice
-from quivers.knot_quiver import knot_quiver
+from quivers.knot_quiver import colored_homfly_vectors_and_quiver
 from quivers.knot_vectors import knot_vectors
 from quivers.evaluate_quiver import evaluate_quiver_knot
 
@@ -11,9 +11,8 @@ from quivers.evaluate_quiver import evaluate_quiver_knot
 knot = (23, 21)
 j = 6
 t1 = time.perf_counter()
-Q = knot_quiver(knot[0],knot[1])
+S, A, Q = colored_homfly_vectors_and_quiver(knot[0],knot[1])
 Q_numpy = np.array(Q.tolist(), dtype=int)    
-S, A, _ = knot_vectors(knot[0], knot[1])
 tm = time.perf_counter()
 quiv = evaluate_quiver_knot(Q_numpy, S, A, knot[0], knot[1], j)
 t2 = time.perf_counter()
