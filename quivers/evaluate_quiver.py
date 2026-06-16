@@ -60,8 +60,8 @@ def evaluate_quiver(Q, S, A, u, v, j):
     min_a, min_q = map(min, zip(*keys))
     normalized = [
         {
-            (k[0] - min_a, k[1] - min_q): v 
-            for k, v in d.items()
+            (k[0] - min_a, k[1] - min_q): val 
+            for k, val in d.items()
         }
         for d in bases_dicts
     ]
@@ -94,8 +94,8 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
     # normalize polynomial so lowest powers are 0
     min_a, min_q = map(min, zip(*poly))
     normalized = {
-        (k[0] - min_a, k[1] - min_q): v 
-        for k, v in poly.items()
+        (k[0] - min_a, k[1] - min_q): val 
+        for k, val in poly.items()
     }
 
     return sp.Poly(dict(normalized), (a, q))
@@ -116,16 +116,17 @@ def evaluate_quiver_jones(Q, H, u, v, j):
         sign = (-1) ** (p1 % 2)
         for i, coeff in enumerate(multinom):
             if coeff != 0:
-                poly[p1+p2+(2*i)] += sign * coeff
+                poly[int(p1+p2+(2*i))] += int(sign * coeff)
 
     # normalize polynomial so lowest powers are 0
-    min_a, min_q = map(min, zip(*poly))
+
+    min_value_key = min(poly)
     normalized = {
-        (k[0] - min_a, k[1] - min_q): v 
-        for k, v in poly.items()
+        k - min_value_key: val 
+        for k, val in poly.items()
     }
 
-    return sp.Poly(dict(normalized), (a, q))
+    return sp.Poly(dict(normalized), q)
 
 def evaluate_quiver_knot_old(Q, S, A, u, v, j):
     # Evaluates the j colored homfly polynomial from the quiver knot
