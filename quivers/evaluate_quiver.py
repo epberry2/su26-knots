@@ -1,5 +1,6 @@
 import sympy as sp
 import numpy as np
+from tqdm import tqdm
 import time
 from itertools import combinations, chain
 from collections import defaultdict
@@ -41,7 +42,9 @@ def evaluate_quiver(Q, S, A, u, v, j):
     bases_polys = [0 for _ in range(j+1)]
     bases_dicts = [defaultdict(int) for _ in range(j+1)] # creates a list of dictionaries mapping powers to coefficients (a,q) -> k
     combos = get_tuples(u+v, j)
-    for d in combos:        
+    combo_list = list(combos)
+
+    for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):      
         d = np.array(d)
         weight = d[:u].sum()
         p1 = np.dot(S, d)
@@ -68,28 +71,32 @@ def evaluate_quiver(Q, S, A, u, v, j):
     return bases_polys
 
 def evaluate_quiver_knot(Q, S, A, u, v, j):
-    # Evaluates the j colored homfly polynomial from the quiver knot
+    # Evaluates the j colored homfly polynomial given the K_(u/v) quiver
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
     S = np.array(S)
     A = np.array(A)
-    homfly = 0
-    combos = get_tuples(u, j)
-    for d in combos:        
+    combos = get_tuples(u, j) # get all u-tuples with values adding up to j
+    combo_list = list(combos)
+
+    for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):        
         d = np.array(d)
         p1 = np.dot(S, d)        
         p2 = np.dot(A, d)
         p3 = np.einsum('i,ij,j', d, Q, d)
         multinom = qc.q_multinomial(d.sum(), list(d))
         sign = (-1) ** (p1 % 2)
-        for i in range(len(multinom)):
-            poly[(p2, p1+p3+(2*i))] += sign * multinom[i]
+        for i, coeff in enumerate(multinom):
+            if coeff != 0:
+                poly[(p2, p1+p3+(2*i))] += sign * coeff
 
+    # normalize polynomial so lowest powers are 0
     min_a, min_q = map(min, zip(*poly))
     normalized = {
         (k[0] - min_a, k[1] - min_q): v 
         for k, v in poly.items()
     }
+
     return sp.Poly(dict(normalized), (a, q))
 
 def evaluate_quiver_knot_old(Q, S, A, u, v, j):
@@ -108,19 +115,3 @@ def evaluate_quiver_knot_old(Q, S, A, u, v, j):
 
     return normalize_laurent_2var(homfly, a, q)
 
-'''
-knot = (5, 2)
-
-Q = quiver(knot[0],knot[1])
-Q_numpy = np.array(Q.tolist(), dtype=int) 
-S, A = tangle_vectors(knot[0],knot[1])
-t1 = time.perf_counter()
-poly = evaluate_quiver(Q_numpy, S, A, knot[0], knot[1], 2)
-t2 = time.perf_counter()
-geo = colored_homfly_geo(knot[0], knot[1], 2)
-t3 = time.perf_counter()
-print(poly)
-print(f"quiver time: {t2 - t1:.4f}")
-print(geo)
-print(f"quiver time: {t3 - t2:.4f}")
-'''
