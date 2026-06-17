@@ -15,7 +15,7 @@ def visualize_lattice(polynomial, path=None, show_plot=True, log_scale=True, edg
     keys = p_dict.keys()
     x, y = zip(*keys)
     z = p_dict.values()
-    sizes = [float(min(abs(c), 50)) for c in z] if thick_dots else 10
+    sizes = [float(np.clip(abs(c), 5, 35)) for c in z] if thick_dots else 10
     norm = colors.SymLogNorm(linthresh=1.0, linscale=1.0, vmin=min(z), vmax=max(z))
     if log_scale:
         if cols in ["black", "red", "blue", "green"]:
