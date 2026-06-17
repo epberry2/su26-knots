@@ -4,6 +4,8 @@ import numpy as np
 import math
 import sympy as sp
 
+from quivers.knot_quiver import colored_homfly_vectors_and_quiver
+
 
 q = sp.symbols('q')
 a = sp.symbols('a')
@@ -38,8 +40,17 @@ def visualize_lattice(polynomial, path=None, show_plot=True, log_scale=True, edg
     if show_plot:
         plt.show()
     
-    
-
-#polynomial = sp.Poly(colored_homfly_knot(3, 1, 2), q, a)
-#visualize_lattice(polynomial)
+def create_quiver_table(n, path="table"):
+    # writes to text file all quivers of knots up to numerator n
+    with open(f"{path}.txt", 'w') as f:
+        for i in range(1,n+1,2):
+            for j in range(1,i):
+                try:                   
+                    S, A, Q = colored_homfly_vectors_and_quiver(i,j)
+                    Q_numpy = np.array(Q.tolist(), dtype=int) 
+                    f.write(f"Quiver for K_{i}/{j}\n")
+                    np.savetxt(f, Q_numpy, fmt="%3d", delimiter=" ")
+                    f.write("\n")
+                except:
+                    pass
 
