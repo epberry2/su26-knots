@@ -71,7 +71,7 @@ def substitute(u, v, j, p):
     Q_numpy = np.array(Q.tolist(), dtype=int) 
     poly = evaluate_quiver_qsub(Q_numpy, S, A, u, v, j, p)
     
-    if poly.eval(1) != 1:
+    if poly.eval(1) < 0:
         return -poly
     return poly
 
@@ -97,15 +97,34 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
         for (deg,), coeff in p.as_dict().items():
             data.append({'Poly_Index': idx + 1, 'Degree': deg, 'Coeff': int(coeff)})
 
+
     df = pd.DataFrame(data)
 
     # Step 2: Pivot so Degrees are columns and Poly_Index are rows
     pivot_df = df.pivot(index='Poly_Index', columns='Degree', values='Coeff').fillna(0)
+
+    # 1. Find the true integer range of your degrees
+    min_deg = pivot_df.columns.min()
+    max_deg = pivot_df.columns.max()
+
+    # 2. Create a complete, unbroken sequence of integers
+    complete_range = range(min_deg, max_deg + 1)
+
+    # 3. Force Pandas to include all columns, filling the missing ones with 0
+
+    pivot_df_fixed = pivot_df.reindex(columns=complete_range, fill_value=0)
+    even_columns = [c for c in pivot_df_fixed.columns if c % 2 == 0]
+    pivot_df_even = pivot_df_fixed[even_columns]
+
     norm = HybridNormalize(vmin=pivot_df.values.min(), vmax=pivot_df.values.max())
 
     # Step 3: Plot the heatmap
     plt.figure(figsize=(10, 6))
-    sns.heatmap(pivot_df, cmap=custom_cmap, norm=norm, annot=False, linewidths=0.5 ,fmt='.0f', cbar=True)
+    ax = sns.heatmap(pivot_df_even, cmap=custom_cmap, norm=norm, annot=False, linewidths=0.5 ,fmt='.0f', cbar=True)
+    ax.plot([0,1], [0,0], color='black', linewidth=2.5)
+    for row_idx in range(len(pivot_df_even)):
+        ax.plot([row_idx+1, row_idx+2 ], [row_idx, row_idx], color='black', linewidth=2.5)
+        ax.plot([row_idx+2, row_idx+2], [row_idx, row_idx+1], color='black', linewidth=2.5)
     plt.title("Polynomial Coefficients Heatmap")
     plt.xlabel("Degree (q^d)")
     plt.ylabel("jth Colored Jones Polynomial")
@@ -113,4 +132,4 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
     dir_path.mkdir(parents=True, exist_ok=True)
     plt.savefig(f"tails/K_{u}_{v}_{qsub}")
 
-create_heatmap(5, 2, 30, 3, 150)
+create_heatmap(11, 8, 8, 3, 50)
