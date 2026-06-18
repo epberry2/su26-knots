@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import sympy as sp
 import seaborn as sns
-from quivers.evaluate_quiver import evaluate_quiver_knot
+from quivers.evaluate_quiver import evaluate_quiver_knot, evaluate_quiver_qsub
 from quivers.knot_quiver import colored_homfly_vectors_and_quiver
 
 # 1. Define the anchor colors for your gradient scale
@@ -14,9 +14,9 @@ from quivers.knot_quiver import colored_homfly_vectors_and_quiver
 colors = [
     (0.0, '#084594'),   # Far negative: Deep Blue
     (0.4, '#80b1d3'),   # Approaches -1: Smooth Light Blue
-    (0.45, '#80b1d3'),  # EXACTLY -1: Solid Sage Green
+    (0.45, '#b3de69'),  # EXACTLY -1: Solid Sage Green
     (0.5, '#e0e0e0'),   # EXACTLY 0: Solid Neutral Gray
-    (0.55, '#fb8072'),  # EXACTLY 1: Solid Pastel Orange
+    (0.55, '#fdb462'),  # EXACTLY 1: Solid Pastel Orange
     (0.6, '#fb8072'),   # Leaves 1: Smooth Light Red
     (1.0, '#b10026')    # Far positive: Deep Red
 ]
@@ -69,14 +69,8 @@ a = sp.symbols('a')
 def substitute(u, v, j, p):
     S, A, Q = colored_homfly_vectors_and_quiver(u, v)
     Q_numpy = np.array(Q.tolist(), dtype=int) 
-    poly = evaluate_quiver_knot(Q_numpy, S, A, u, v, j)
-    poly = poly.as_expr().subs(q, q**-1)
-    poly = poly.subs(a, q**p)
-    terms = poly.as_coefficients_dict(q)
-    if len(terms) == 1:
-        return poly
-    min_power = min(x.as_base_exp()[1] for x in terms if x != 1)
-    poly = sp.Poly(sp.expand(sp.simplify(poly * q**-min_power)), q)
+    poly = evaluate_quiver_qsub(Q_numpy, S, A, u, v, j, p)
+    
     if poly.eval(1) != 1:
         return -poly
     return poly
@@ -119,4 +113,4 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
     dir_path.mkdir(parents=True, exist_ok=True)
     plt.savefig(f"tails/K_{u}_{v}_{qsub}")
 
-create_heatmap(5, 2, 15, 3, 150)
+create_heatmap(5, 2, 30, 3, 150)
