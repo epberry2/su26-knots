@@ -14,19 +14,22 @@ def print_min_vecs(u, v, n, m=1):
     for j in range(1, n + 1):
         combos = get_tuples(u, j) # returns list[tuple] of vectors of length u which partition j
         combo_list = list(combos)
-        min_d = [(np.zeros(u, dtype=int), 0) for _ in range(m)]
+        min_d = [(np.zeros(u, dtype=int), 0, 0) for _ in range(m)]
         flag = False
         for d in combo_list:
             d = np.array(d)
             p1 = np.dot(S, d)        
-            # p2 = np.dot(A, d)
+            p2 = np.dot(A, d)
             p3 = np.einsum('i,ij,j', d, Q, d)
-            if not flag or p1 + p3 < min_d[m - 1][1]:
-                insort(min_d, (d, p1 + p3), key=lambda x: x[1])
+            if not flag or p1 - 2 * p2 + p3 < min_d[m - 1][1]:
+                insort(min_d, (d, p1 + p3, int((-1) ** (p1 % 2))), key=lambda x: x[1])
                 min_d.pop()
             flag = True
-        print([(vec.tolist(), val) for vec, val in min_d])
+        print([(vec.tolist(), val, sgn) for vec, val, sgn in min_d])
         print("-------------------------")
+    print(S)
+    print(A)
+    sp.pprint(Q)
 def print_max_vecs(u, v, n, m=1):
     S, A, Q = colored_homfly_vectors_and_quiver(u, v)
     print(S)
@@ -37,8 +40,7 @@ def print_max_vecs(u, v, n, m=1):
         qc = QuantumCombinatorics()
         combos = get_tuples(u, j)
         combo_list = list(combos)
-        max_pow = 0
-        max_d = (0) * u
+        max_d = [(np.zeros(u, dtype=int), 0, 0) for _ in range(m)]
         flag = False
         for d in combo_list:
             d = np.array(d)
@@ -47,18 +49,18 @@ def print_max_vecs(u, v, n, m=1):
             p3 = np.einsum('i,ij,j', d, Q, d)
             multinom = qc.get_multinomial(d)
             for i, _ in enumerate(multinom):
-                if not flag or p1 + p3 + 2 * i > max_pow:
-                    max_pow = p1 + p3 + 2 * i
-                    max_d = d
+                if not flag or p1 + p3 + 2 * i > max_d[m - 1][1]:
+                    insort(max_d, (d, p1 + p3 + 2 * i, int((-1) ** (p1 % 2))), key=lambda x: -x[1])
+                    max_d.pop()
                 flag = True
         print(max_d)
 
-u, v = 13, 8
-printnum = 10
+u, v = 29, 25
+printnum = 5
 
-S, A, Q = colored_homfly_vectors_and_quiver(u, v)
-sp.pprint(Q)
+# S, A, Q = colored_homfly_vectors_and_quiver(u, v)
+# sp.pprint(Q)
 
 
 
-# print_min_vecs(u, v, 30, 10)
+print_max_vecs(u, v, 30, 4)

@@ -1,4 +1,5 @@
 import quivers.mu_funcs as mu_func
+from quivers.knot_vectors import knot_vectors
 from helpers.findloops import findpathwithloops
 from jones.JonesBracketGeoHelpers import rotateCCW
 from jones.GeoJonesKnotHelpers import intersection_index
@@ -178,9 +179,9 @@ class winding_tracker:
         for i in range(self.num):
             wind_term = (
                 3 * (self.writhes_k_w[0] - self.writhe_states[i][0])
-                - self.writhes_k_w[1] - self.writhe_states[i][1]
-                - self.writhes_k_w[2] - self.writhe_states[i][2]
-            )
+                - self.writhes_k_w[1] + self.writhe_states[i][1]
+                - self.writhes_k_w[2] + self.writhe_states[i][2]
+            ) // 2
             h_vec[i] = wind_term + 2 * mu2 - mu1
             q_diag[i] = wind_term - mu3
         return h_vec, q_diag
@@ -189,5 +190,5 @@ class winding_tracker:
 
 
 
-
+# print(colored_homfly_vectors_and_quiver(5, 2)[0])
 # sp.pprint(colored_homfly_vectors_and_quiver(11, 8)[2])

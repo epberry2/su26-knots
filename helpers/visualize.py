@@ -68,6 +68,15 @@ def visualize_lattice_from_dict(p_dict, path=None, show_plot=True, log_scale=Tru
         plt.savefig(f"{path}.png")
     if show_plot:
         plt.show()
+        
+def diff_quiv(i, j):
+    _, _, Q = colored_homfly_vectors_and_quiver(i, j)
+    D = Q[1:, 1:] - Q[1:, :-1] - Q[:-1, 1:] + Q[:-1, :-1]
+    return D
+
+def quiv(i, j):
+    return colored_homfly_vectors_and_quiver(i, j)[2]
+
     
 def create_quiver_table(n, path="table"):
     # writes to text file all quivers of knots up to numerator n
@@ -75,11 +84,14 @@ def create_quiver_table(n, path="table"):
         for i in range(1,n+1,2):
             for j in range(1,i):
                 try:                   
-                    S, A, Q = colored_homfly_vectors_and_quiver(i,j)
+                    Q = diff_quiv(i,j)
                     Q_numpy = np.array(Q.tolist(), dtype=int) 
                     f.write(f"Quiver for K_{i}/{j}\n")
                     np.savetxt(f, Q_numpy, fmt="%3d", delimiter=" ")
                     f.write("\n")
                 except:
                     pass
+                
+# create_quiver_table(30)
+
 
