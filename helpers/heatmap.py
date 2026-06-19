@@ -67,15 +67,18 @@ q = sp.symbols('q')
 a = sp.symbols('a')
 
 def substitute(u, v, j, p):
+    # computes the jth colored homfly polynomial and then substitutes q -> q^-1 and q -> q^p
     S, A, Q = colored_homfly_vectors_and_quiver(u, v)
     Q_numpy = np.array(Q.tolist(), dtype=int) 
     poly = evaluate_quiver_qsub(Q_numpy, S, A, u, v, j, p)
     
-    if poly.eval(1) < 0:
+    # normalize so that the first term is positive
+    if poly(0) < 0:
         return -poly
     return poly
 
 def truncate(p, max_power):
+    # truncates polynomial up to max_power
     filtered_terms = {
         deg: coeff 
         for deg, coeff in p.as_dict().items() 
@@ -86,31 +89,30 @@ def truncate(p, max_power):
 
 def create_heatmap(u, v, j=10, qsub=2, trunc=50):
     # creates a heatmap to visualize the tail of the colored jones polynomial
-    polies = []
+    polies = [] # create list of j colored jones polynomials
     for i in range(1, j+1):
         sub = substitute(u, v, i, qsub)
         polies.append(truncate(sub, trunc))
 
     data = []
     for idx, p in enumerate(polies):
-        # p.to_dict() returns {(degree,): coeff}
+        # p.as_dict() returns {(degree,): coeff}
         for (deg,), coeff in p.as_dict().items():
             data.append({'Poly_Index': idx + 1, 'Degree': deg, 'Coeff': int(coeff)})
 
 
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data) # saves data in a data frame
 
-    # Step 2: Pivot so Degrees are columns and Poly_Index are rows
+    # Pivot so Degrees are columns and Poly_Index are rows
     pivot_df = df.pivot(index='Poly_Index', columns='Degree', values='Coeff').fillna(0)
 
-    # 1. Find the true integer range of your degrees
+    # Find the integer range of degrees for heatmap
     min_deg = pivot_df.columns.min()
     max_deg = pivot_df.columns.max()
 
-    # 2. Create a complete, unbroken sequence of integers
     complete_range = range(min_deg, max_deg + 1)
 
-    # 3. Force Pandas to include all columns, filling the missing ones with 0
+    # Force Pandas to include all even columns, filling the missing ones with 0
 
     pivot_df_fixed = pivot_df.reindex(columns=complete_range, fill_value=0)
     even_columns = [c for c in pivot_df_fixed.columns if c % 2 == 0]
@@ -118,13 +120,21 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
 
     norm = HybridNormalize(vmin=pivot_df.values.min(), vmax=pivot_df.values.max())
 
-    # Step 3: Plot the heatmap
+    # Plot the heatmap
     plt.figure(figsize=(10, 6))
     ax = sns.heatmap(pivot_df_even, cmap=custom_cmap, norm=norm, annot=False, linewidths=0.5 ,fmt='.0f', cbar=True)
-    ax.plot([0,1], [0,0], color='black', linewidth=2.5)
+    
+    # calculate shift in staircase
+    shift = 0 
+    if u % 4 == 1 and v % 2 == 0 and v <= u // 2:
+        shift = qsub - 2
+
+    # plot staircase
+    ax.plot([0,1+shift], [0,0], color='black', linewidth=2.5)
     for row_idx in range(len(pivot_df_even)):
-        ax.plot([row_idx+1, row_idx+2 ], [row_idx, row_idx], color='black', linewidth=2.5)
-        ax.plot([row_idx+2, row_idx+2], [row_idx, row_idx+1], color='black', linewidth=2.5)
+        ax.plot([row_idx+1+shift, row_idx+2+shift], [row_idx, row_idx], color='black', linewidth=2.5)
+        ax.plot([row_idx+2+shift, row_idx+2+shift], [row_idx, row_idx+1], color='black', linewidth=2.5)
+
     plt.title("Polynomial Coefficients Heatmap")
     plt.xlabel("Degree (q^d)")
     plt.ylabel("jth Colored Jones Polynomial")
@@ -132,4 +142,4 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
     dir_path.mkdir(parents=True, exist_ok=True)
     plt.savefig(f"tails/K_{u}_{v}_{qsub}")
 
-create_heatmap(11, 8, 8, 3, 50)
+create_heatmap(5, 2, j=30, qsub=10, trunc=150)
