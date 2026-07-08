@@ -126,7 +126,8 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
     
     # calculate shift in staircase
     shift = 0 
-    if u % 4 == 1 and v % 2 == 0 and v <= u // 2:
+    _, A, _ = colored_homfly_vectors_and_quiver(u, v)
+    if A.count(min(A)) == 1:
         shift = qsub - 2
 
     # plot staircase
@@ -142,4 +143,4 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
     dir_path.mkdir(parents=True, exist_ok=True)
     plt.savefig(f"tails/K_{u}_{v}_{qsub}")
 
-create_heatmap(5, 2, j=30, qsub=10, trunc=150)
+create_heatmap(17, 6, j=8, qsub=4, trunc=150)
