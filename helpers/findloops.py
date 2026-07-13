@@ -58,6 +58,7 @@ def findpath(num, denom):
     
 
 def findpathwithloops(num, denom):
+    "returns (path, loops)"
     path = findpath(num, denom)
     pathwithloops = []
     iter = 1
