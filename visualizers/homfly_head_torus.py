@@ -1,7 +1,7 @@
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
-from helpers.heatmap import HybridNormalize
+from visualizers.heatmap import HybridNormalize
 import matplotlib.colors as mcolors
 
 q, a = sp.symbols('q a')

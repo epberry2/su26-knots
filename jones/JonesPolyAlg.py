@@ -61,5 +61,3 @@ def AlgJonesKnot(u,v):
     if (jones_poly(1) == -1):
         jones_poly *= sp.Poly(-1, q)
     return jones_poly
-
-print(AlgBracket(5,1))
