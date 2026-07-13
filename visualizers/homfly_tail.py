@@ -9,7 +9,7 @@ import time
 
 from quivers.knot_quiver import colored_homfly_vectors_and_quiver, colored_jones_vector_and_quiver
 from quivers.evaluate_quiver import evaluate_quiver_knot_dict, evaluate_quiver_jones_from_homfly, evaluate_quiver_knot
-from helpers.heatmap import HybridNormalize
+from visualizers.heatmap import HybridNormalize
 
 q = sp.symbols('q')
 a = sp.symbols('a')
@@ -314,4 +314,4 @@ def homfly_plots(u, v, trunc=100, dir="se"):
 
 #homfly_plots(5, 1, trunc=25, dir="se")
 
-homfly_tail_heatmap(9, 4, j=10, trunc=300, dir="nw")
+#homfly_tail_heatmap(9, 4, j=10, trunc=300, dir="nw")
