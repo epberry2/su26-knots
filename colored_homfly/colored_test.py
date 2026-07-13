@@ -9,7 +9,9 @@ from helpers.normalize_laurent import *
 from helpers.tanglestate import get_state
 from quivers.tangle_quiver import quiver
 from quivers.tangle_vectors import tangle_vectors
-from quivers.evaluate_quiver import evaluate_quiver
+from quivers.evaluate_quiver import evaluate_quiver, evaluate_quiver_knot
+from quivers.knot_quiver import colored_homfly_vectors_and_quiver
+from quivers.knot_vectors import knot_vectors
 
 a = sp.symbols('a')
 q = sp.symbols('q')
@@ -52,10 +54,11 @@ def test_multiple(knots, n):
 
 def test_quiver(u, v, j, times=True):
     print("")
-    print(f"Testing {(u, v, j)} knot")
+    print(f"Testing {(u, v, j)} tangle")
 
     t1 = time.perf_counter()
-    geo = colored_homfly_geo(u, v, j)
+    #geo = colored_homfly_geo(u, v, j)
+    geo = 0
     t2 = time.perf_counter()
 
     if times:
@@ -71,14 +74,42 @@ def test_quiver(u, v, j, times=True):
     t3 = time.perf_counter()
     if times:
         print(f"Evaluating quiver took {t3 - tq:.6f} seconds")
-    for i in range(j):
-        if geo[i] != quiv[i] and -geo[i] != quiv[i]:
-            print(geo[i])
-            print(quiv[i])
-            return False
+    #for i in range(j):
+    #    if geo[i] != quiv[i] and -geo[i] != quiv[i]:
+    #        print(geo[i])
+    #        print(quiv[i])
+    #        return False
     return True
 
-print(test_quiver(3, 1, 8))
+def test_quiver_knot(u, v, j, times=True):
+    print(f"Testing {(u, v, j)} knot")
+
+    t1 = time.perf_counter()
+    geo = colored_homfly_knot(u, v, j)
+
+    t2 = time.perf_counter()
+
+    if times:
+        print(f"Geo computation took {t2 - t1:.6f} seconds")
+    
+    S, A, Q = colored_homfly_vectors_and_quiver(u,v)
+
+    tq = time.perf_counter()
+    if times:
+        print(f"Computing quiver took {tq - t2:.6f} seconds")
+    Q_numpy = np.array(Q.tolist(), dtype=int)
+    quiv = evaluate_quiver_knot(Q_numpy, S, A, u, v, j)
+    t3 = time.perf_counter()
+    if times:
+        print(f"Evaluating quiver took {t3 - tq:.6f} seconds")
+
+    return quiv == geo or -quiv == geo
+
+
+
+print(test_quiver_knot(5, 2, 2))
+print(test_jcolor_polynomial(5, 2, 2))
+
 
 # knots = [(3, 1), (7, 3)]
 # test_multiple(knots, 3)

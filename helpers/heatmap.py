@@ -28,37 +28,37 @@ class HybridNormalize(mcolors.Normalize):
         super().__init__(vmin, vmax, clip)
         
     def __call__(self, value, clip=None):
-        # Convert inputs to numpy array safely
+        # Convert inputs to a clean floating-point numpy array
         val = np.atleast_1d(value).astype(float)
-        result = np.zeros_like(val)
         
-        # Determine the dynamic max extension to keep the colorbar perfectly symmetric
+        # Establish symmetric max bounds
         max_abs = max(abs(self.vmin), abs(self.vmax), 2.0)
         
-        # Walk through the zones and map them manually to the cmap segments
-        # Zone A: Highly negative numbers down to -1
-        mask_neg = val < -1
-        if np.any(mask_neg):
-            result[mask_neg] = 0.0 + 0.4 * (val[mask_neg] - (-max_abs)) / (-1 - (-max_abs))
-            
-        # Zone B: Fixed plateaus for structural anchors
-        result[val == -1] = 0.45
-        result[val == 0] = 0.5
-        result[val == 1] = 0.55
+        # 1. Define distinct, mutually exclusive conditions
+        conditions = [
+            (val < -1),                                # Zone A: Extreme negatives
+            (val == -1),                               # Anchor: Exactly -1
+            (val > -1) & (val < 0),                    # Zone C1: Slope between -1 and 0
+            (val == 0),                                # Anchor: Exactly 0
+            (val > 0) & (val < 1),                     # Zone C2: Slope between 0 and 1
+            (val == 1),                                # Anchor: Exactly 1
+            (val > 1)                                  # Zone D: Extreme positives
+        ]
         
-        # Zone C: Slopes between anchors to prevent harsh edges
-        mask_sl1 = (val > -1) & (val < 0)
-        result[mask_sl1] = 0.45 + 0.05 * (val[mask_sl1] - (-1))
+        # 2. Define corresponding mathematical formulas for each condition
+        choices = [
+            0.0 + 0.4 * (val - (-max_abs)) / (-1 - (-max_abs)), # Zone A Formula
+            0.45,                                               # Anchor -1
+            0.45 + 0.05 * (val - (-1)),                         # Slope C1 Formula
+            0.50,                                               # Anchor 0 (Guaranteed Neutral Gray)
+            0.50 + 0.05 * (val - 0),                            # Slope C2 Formula
+            0.55,                                               # Anchor 1
+            0.60 + 0.4 * (val - 1) / (max_abs - 1)              # Zone D Formula
+        ]
         
-        mask_sl2 = (val > 0) & (val < 1)
-        result[mask_sl2] = 0.50 + 0.05 * (val[mask_sl2] - 0)
+        # np.select matches conditions to choices cleanly; default handles fallback
+        result = np.select(conditions, choices, default=0.5)
         
-        # Zone D: Highly positive numbers starting from 1
-        mask_pos = val > 1
-        if np.any(mask_pos):
-            result[mask_pos] = 0.6 + 0.4 * (val[mask_pos] - 1) / (max_abs - 1)
-            
-        # Bound between 0 and 1 for matplotlib standard mapping
         return np.clip(result, 0.0, 1.0)
 
 
@@ -77,6 +77,37 @@ def substitute(u, v, j, p):
         return -poly
     return poly
 
+def invert_and_renormalize(expr, variable):
+    # Step 1: Invert all powers by substituting variable with 1/variable
+    inverted_expr = expr.subs(variable, 1/variable)
+    
+    # Expand to simplify expressions like (1/q)**2 into q**-2
+    inverted_expr = sp.expand(inverted_expr)
+    
+    # Get the components of the inverted polynomial
+    coeff_dict = inverted_expr.as_coefficients_dict()
+    
+    # Helper to extract the numerical exponent from any term
+    def get_exponent(term):
+        if term == 1:
+            return 0
+        if term == variable:
+            return 1
+        if isinstance(term, sp.Pow) and term.base == variable:
+            return term.exp
+        return 0
+    
+    # Find the lowest exponent present in the inverted dictionary
+    exponents = [get_exponent(term) for term in coeff_dict.keys()]
+    lowest_power = min(exponents)
+    
+    # Step 2: Renormalize by multiplying by variable**(-lowest_power)
+    # This shifts the lowest power perfectly to 0
+    renormalization_factor = variable ** (-lowest_power)
+    normalized_expr = sp.expand(inverted_expr * renormalization_factor)
+    
+    return sp.Poly(normalized_expr, q)
+
 def truncate(p, max_power):
     # truncates polynomial up to max_power
     filtered_terms = {
@@ -87,11 +118,16 @@ def truncate(p, max_power):
     truncated_poly = sp.Poly.from_dict(filtered_terms, p.gens)
     return truncated_poly
 
-def create_heatmap(u, v, j=10, qsub=2, trunc=50):
+def create_heatmap(u, v, j=10, qsub=2, trunc=50, tail=True):
     # creates a heatmap to visualize the tail of the colored jones polynomial
     polies = [] # create list of j colored jones polynomials
     for i in range(1, j+1):
         sub = substitute(u, v, i, qsub)
+        if not tail:
+            sub = sub.as_expr()
+            sub = invert_and_renormalize(sub, q)
+            if sub(0) < 0:
+                sub = -sub
         polies.append(truncate(sub, trunc))
 
     data = []
@@ -141,6 +177,9 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50):
     plt.ylabel("jth Colored Jones Polynomial")
     dir_path = Path("tails")
     dir_path.mkdir(parents=True, exist_ok=True)
-    plt.savefig(f"tails/K_{u}_{v}_{qsub}")
+    if tail:
+        plt.savefig(f"tails/K_{u}_{v}_{qsub}")
+    else:
+        plt.savefig(f"tails/H_{u}_{v}_{qsub}")
 
-create_heatmap(17, 6, j=8, qsub=4, trunc=150)
+#create_heatmap(5, 1, j=20, qsub=2, trunc=50, tail=False)

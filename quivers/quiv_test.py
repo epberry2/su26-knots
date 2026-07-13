@@ -55,12 +55,32 @@ def print_max_vecs(u, v, n, m=1):
                 flag = True
         print(max_d)
 
-u, v = 29, 25
-printnum = 5
-
-# S, A, Q = colored_homfly_vectors_and_quiver(u, v)
-# sp.pprint(Q)
 
 
+def min_vecs_qsub(u, v, j, qsub, nb_vecs):
+    qc = QuantumCombinatorics()
+    combos = get_tuples(u, j)
+    S, A, Q = colored_homfly_vectors_and_quiver(u,v)
+    S = np.array(S)
+    A = np.array(A)
+    stack = []
+    for d in combos:
+        dn = np.array(d)
+        p1 = np.dot(-S, dn)        
+        p2 = np.dot(qsub * A, dn)
+        p3 = np.einsum('i,ij,j', dn, -Q, dn)
+        sign = (-1) ** (p1 % 2)
+        multinom = qc.get_multinomial(dn)
+        for i, coeff in enumerate(multinom):
+            if coeff != 0:
+                insort(stack, (d, int(p1+p2+p3-(2*i)), int(sign)), key=lambda x: x[1])
+                if len(stack) > nb_vecs:
+                    stack.pop()
 
-print_max_vecs(u, v, 30, 4)
+        
+    print(stack)
+
+#print_min_vecs(5,2,5,5)
+
+for j in range(1,10):
+    min_vecs_qsub(5, 2, j, 2, 10)
