@@ -86,10 +86,12 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
         p3 = np.einsum('i,ij,j', d, Q, d)
         multinom = qc.get_multinomial(d)
         #multinom = qc.q_multinomial(d.sum(), list(d))
-        sign = (-1) ** (p1 % 2)
+        #sign = (-1) ** (p1 % 2)
         for i, coeff in enumerate(multinom):
             if coeff != 0:
-                poly[(p2, p1+p3+(2*i))] += sign * coeff
+                if p1 % 2:
+                    poly[(p2, p1+p3+(2*i))] -= int(coeff)
+                else: poly[(p2, p1+p3+(2*i))] += int(coeff)
 
     # normalize polynomial so lowest powers are 0
     min_a, min_q = map(min, zip(*poly))

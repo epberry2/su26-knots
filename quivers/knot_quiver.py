@@ -9,6 +9,36 @@ from typing import List, Set, Tuple
 import sympy as sp
 
 
+def intersection_path(u, v):
+    winder = winding_tracker(u, v)
+    return [idx + 1 for idx in winder.intersection_path]
+
+def diag_wind_matrix(u, v):
+    winder = winding_tracker(u, v)
+    _, _, q_diag = winder.homfly_vectors()
+    path = winder.intersection_path
+    W = sp.Matrix.zeros(u, u)
+    for idx_i in range(u):
+        i = path[idx_i]
+        for idx_j in range(idx_i):
+            j = path[idx_j]
+            W[j, i] = winder.wind_diag(j, i)
+            W[i, j] = q_diag[i] - q_diag[j] + winder.wind_diag(j, i) - 4 * winder.wind_x_plus(j, i)
+    return W
+
+def x_plus_wind_matrix(u, v):
+    winder = winding_tracker(u, v)
+    _, _, q_diag = winder.homfly_vectors()
+    path = winder.intersection_path
+    X = sp.Matrix.zeros(u, u)
+    for idx_i in range(u):
+        i = path[idx_i]
+        for idx_j in range(idx_i):
+            j = path[idx_j]
+            X[j, i] = winder.wind_x_plus(j, i)
+            X[i, j] = -X[j, i]
+    return X
+
 def colored_homfly_vectors_and_quiver(
     u: int, v: int) -> Tuple[List[int], List[int], sp.Matrix]:
     """
@@ -19,7 +49,6 @@ def colored_homfly_vectors_and_quiver(
     if u < v:
         raise ValueError("U")
     winder = winding_tracker(u, v)
-    winder.trace_path()
     Q = sp.Matrix.zeros(u, u)
     s_vec, a_vec, q_diag = winder.homfly_vectors()
     path = winder.intersection_path
@@ -29,7 +58,7 @@ def colored_homfly_vectors_and_quiver(
         for idx_j in range(idx_i):
             j = path[idx_j]
             Q[i, j] = Q[i, i] + winder.wind_diag(j, i) - 2 * winder.wind_x_plus(j, i)
-            Q[j, i] = Q[i, j]
+            Q[j, i] = Q[i, j] # = Q[j, j] + winddiag(ij) - 2winderwindxplus(ji)
     return s_vec, a_vec, Q
 
 def colored_jones_vector_and_quiver(
@@ -40,7 +69,6 @@ def colored_jones_vector_and_quiver(
     Output: (H, Q') of colored Jones polynomial for the knot K_{u/v}
     """
     winder = winding_tracker(u, v)
-    winder.trace_path()
     Q = sp.Matrix.zeros(u, u)
     h_vec, q_diag = winder.colored_jones_vectors()
     path = winder.intersection_path
@@ -54,7 +82,6 @@ def colored_jones_vector_and_quiver(
     return h_vec, Q
         
         
-
 @dataclass
 class winding_tracker:
     num: int
@@ -68,6 +95,8 @@ class winding_tracker:
     writhes_k_w: Tuple[int] = (0, 0, 0)
     
     def __post_init__(self):
+        if self.num % 2 == 0:
+            raise ValueError("num must be odd")
         self.diag_winds = [[0] * self.num for _ in range(self.num)]
         self.writhe_states = [[0, 0, 0] for _ in range(self.num)]
         self.curr_writhes = [0, 0, 0]
@@ -75,8 +104,9 @@ class winding_tracker:
         if orientation == "RI":
             raise ValueError("RI orientation")
         self.permute = (1, 2 if orientation == "UP" else 0, 0 if orientation == "UP" else 2)
+        self._trace_path()
         
-    def step(self, curr_point, next_point, path_type):
+    def _step(self, curr_point, next_point, path_type):
         is_cw = not rotateCCW(self.num, self.denom, curr_point, next_point, path_type)
         intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
         match path_type:
@@ -125,7 +155,7 @@ class winding_tracker:
                 self.curr_writhes[self.permute[0]] += 2 if is_cw else -2
                 
                                 
-    def turn_around_CW(self): # Will always turn CW because we walk with RH to wall
+    def _turn_around_CW(self): # Will always turn CW because we walk with RH to wall
         if self.permute[2] == 0: # Path end (X+) is rightmost point
             self.curr_writhes[self.permute[2]] += 2
             self.writhes_k_w = self.writhe_states[self.num - 1] = tuple(self.curr_writhes)
@@ -138,22 +168,23 @@ class winding_tracker:
             self.intersection_path.append(0)
             self.curr_writhes[self.permute[1]] += 1
 
-                
-    def trace_path(self):
+       
+    def _trace_path(self):
         path, loops = findpathwithloops(self.num, self.denom)
         for curr_point, next_point, path_type in zip(path, path[1:], loops):
-            self.step(curr_point, next_point, path_type)
-        self.turn_around_CW()
+            self._step(curr_point, next_point, path_type)
+        self._turn_around_CW()
         for curr_point, next_point, path_type in zip(reversed(path), reversed(path[:-1]), reversed(loops)):
-            self.step(curr_point, next_point, path_type)
+            self._step(curr_point, next_point, path_type)
     
     def wind_diag(self, j, i):
         "j MUST come before i in intersection_path"
         return self.diag_winds[j][i]
     def wind_x_plus(self, j, i):
-        "j MIST come before i in intersection_path"
+        "j MUST come before i in intersection_path"
         return (self.writhe_states[i][0] - self.writhe_states[j][0]) // 2
     def homfly_vectors(self):
+        "return s_vec, a_vec, q_diag"
         mu1, mu2, mu3 = mu_func.mus(self.num, self.denom)
         s_vec = [0] * self.num
         a_vec = [0] * self.num
@@ -187,8 +218,6 @@ class winding_tracker:
         return h_vec, q_diag
 
 
+# sp.pprint(diag_wind_matrix(7, 3))
 
-
-
-# print(colored_homfly_vectors_and_quiver(5, 2)[0])
-# sp.pprint(colored_homfly_vectors_and_quiver(11, 8)[2])
+# sp.pprint(colored_homfly_vectors_and_quiver(7, 3))
