@@ -27,6 +27,7 @@ custom_cmap = mcolors.LinearSegmentedColormap.from_list('custom_hybrid', colors)
 
 
 def homfly_tail(u, v, j, trunc=10, dir="se"):
+    r"""Computes the first j colored Homfly polynomials of the rational knot $K_{u/v}$."""
     if dir not in {"se", "sw", "nw", "ne"}:
         raise ValueError("direction is se, sw, nw, ne")
     S, A, Q = colored_homfly_vectors_and_quiver(u,v)
@@ -74,6 +75,7 @@ def homfly_tail(u, v, j, trunc=10, dir="se"):
     return xs, ys, zs
 
 def homfly_tail_animation(u, v, j, trunc):
+    """Creates an animation for the tail of the colored Homfly Polynomial."""
     ys, xs, zs = homfly_tail(u, v, j, trunc)
     num_frames = len(xs)
     all_z = [val for frame in zs for val in frame]
@@ -127,6 +129,7 @@ def homfly_tail_animation(u, v, j, trunc):
     return True
 
 def homfly_tail_heatmap(u, v, j, trunc, dir="se"):
+    """Creates an animation for the tail of the colored Homfly polynomial visualized on a heatmap."""
     xs, ys, zs = homfly_tail(u, v, j, trunc, dir)
 
     num_frames = j
@@ -241,6 +244,7 @@ def homfly_tail_heatmap(u, v, j, trunc, dir="se"):
     plt.close()
 
 def homfly_plots(u, v, trunc=100, dir="se"):
+    """Creates subplots for the first 10 colored Homfly tails of a knot."""
     xs, ys, zs = homfly_tail(u, v, 10, trunc, dir)
     
     fig, ax = plt.subplots(2, 5, figsize=(20,12), sharex=True, sharey=True)
@@ -312,6 +316,3 @@ def homfly_plots(u, v, trunc=100, dir="se"):
     print(f"Heatmap plots successfully saved to {output_path}")
     plt.close()
 
-#homfly_plots(5, 1, trunc=25, dir="se")
-
-#homfly_tail_heatmap(9, 4, j=10, trunc=300, dir="nw")

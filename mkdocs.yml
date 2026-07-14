@@ -1,0 +1,31 @@
+# To host website locally:
+# 1. pip install mkdocs-material mkdocstrings[python]
+# 2. in the terminal, run "mkdocs serve"
+# 3. open link to server (will look like http://XXX.X.X.X:XXXX/)
+
+site_name: Colored Homfly Polynomials of Rational Knots
+
+theme:
+  name: material
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
+
+nav:
+  - Home: index.md
+  - Tutorial: tutorial.md
+  - API:
+    - Helpers: helpers.md
+    - Quivers: quivers.md
+    - Visualizers: visualizers.md
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

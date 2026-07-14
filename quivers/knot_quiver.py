@@ -11,7 +11,8 @@ import sympy as sp
 
 def colored_homfly_vectors_and_quiver(
     u: int, v: int) -> Tuple[List[int], List[int], sp.Matrix]:
-    """
+    """Calculates the Homfly quiver data for the knot K_u/v
+    
     Input: u, v
     
     Output: (S, A, Q) of colored Homfly polynomial for the knot K_{u/v}
@@ -34,7 +35,8 @@ def colored_homfly_vectors_and_quiver(
 
 def colored_jones_vector_and_quiver(
     u, v) -> Tuple[List[int], sp.Matrix]:
-    """
+    """Calculates the Jones quiver data for the knot K_u/v
+
     Input: u, v
     
     Output: (H, Q') of colored Jones polynomial for the knot K_{u/v}
@@ -57,6 +59,7 @@ def colored_jones_vector_and_quiver(
 
 @dataclass
 class winding_tracker:
+    """Tracks the winding numbers for loops on alpha_u/v bar"""
     num: int
     denom: int
     diag_winds: List[List[int]] = field(init = False)
@@ -148,10 +151,10 @@ class winding_tracker:
             self.step(curr_point, next_point, path_type)
     
     def wind_diag(self, j, i):
-        "j MUST come before i in intersection_path"
+        #j MUST come before i in intersection_path
         return self.diag_winds[j][i]
     def wind_x_plus(self, j, i):
-        "j MIST come before i in intersection_path"
+        #j MUST come before i in intersection_path
         return (self.writhe_states[i][0] - self.writhe_states[j][0]) // 2
     def homfly_vectors(self):
         mu1, mu2, mu3 = mu_func.mus(self.num, self.denom)

@@ -1,6 +1,7 @@
 from fractions import Fraction
 
 def continuedfrac(a, b): 
+    """Computes the continued fraction expansion of a/b."""
     X = []
     num = a
     denom = b
@@ -32,6 +33,11 @@ def cf_value(cf):
     return x
 
 class TangleState():
+    """Keeps track of the orientation of a tangle.
+    
+    Orientation is one of UP, OP, RI.
+    The points are a permutation of Y, X-, X+.
+    """
     def __init__(self):
         self.orient = "UP"
         self.points = ("Y", "X-", "X+")
@@ -46,6 +52,7 @@ class TangleState():
             self.orient = "UP"
     
     def t_twist(self):
+        """Updates the state after a top twist """
         self.points = (self.points[1], self.points[0], self.points[2])
         if self.points[0] == "X+":
             self.orient = "RI"
@@ -55,6 +62,7 @@ class TangleState():
             self.orient = "UP"
     
     def r_twist(self):
+        """Updates the state after a right twist"""
         self.points = (self.points[0], self.points[2], self.points[1])
         if self.points[0] == "X+":
             self.orient = "RI"
@@ -65,7 +73,10 @@ class TangleState():
 
 # Returns the permutation of [Y, X-, X+] given tau_(u/v)
 def get_state(u,v):
-    "Returns (orientation, points)"
+    """Computes the state of K_u/v.
+
+    Returns (orientation, points).
+    """
     x = continuedfrac(u,v)
     tangle = TangleState()
     x.reverse()
