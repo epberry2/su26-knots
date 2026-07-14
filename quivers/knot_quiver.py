@@ -86,7 +86,9 @@ def colored_jones_vector_and_quiver(
         
 @dataclass
 class winding_tracker:
-    """Tracks the winding numbers for loops on alpha_u/v bar"""
+    """
+    Tracks the winding numbers for loops on alpha_u/v bar
+    """
     num: int
     denom: int
     diag_winds: List[List[int]] = field(init = False)
@@ -110,6 +112,15 @@ class winding_tracker:
         self._trace_path()
         
     def _step(self, curr_point, next_point, path_type):
+        """Given a loop of type R, T, L, or C, updates the writhes of each tracked
+        path, and, if the loop hits an intersection point, begins tracking paths
+        beginning at it and ends tracking paths ending at it
+
+        Args:
+            curr_point (int): starting point of loop
+            next_point (int): ending point of loop
+            path_type (str): type of loop
+        """
         is_cw = not rotateCCW(self.num, self.denom, curr_point, next_point, path_type)
         intersect = intersection_index(self.num, self.denom, curr_point, next_point, path_type)
         match path_type:
@@ -159,6 +170,8 @@ class winding_tracker:
                 
                                 
     def _turn_around_CW(self): # Will always turn CW because we walk with RH to wall
+        """The last type of "loop" to consider: path goes to X+, turns around, and returns back
+        """
         if self.permute[2] == 0: # Path end (X+) is rightmost point
             self.curr_writhes[self.permute[2]] += 2
             self.writhes_k_w = self.writhe_states[self.num - 1] = tuple(self.curr_writhes)
@@ -173,6 +186,9 @@ class winding_tracker:
 
        
     def _trace_path(self):
+        """Splits :math:`\overline{\\alpha_{u/v}}` into a composition of loops, and then \\
+        progresses sequentially through them, updating writhes along the way
+        """
         path, loops = findpathwithloops(self.num, self.denom)
         for curr_point, next_point, path_type in zip(path, path[1:], loops):
             self._step(curr_point, next_point, path_type)
@@ -181,10 +197,10 @@ class winding_tracker:
             self._step(curr_point, next_point, path_type)
     
     def wind_diag(self, j, i):
-        #j MUST come before i in intersection_path
+        "j MUST come before i in intersection_path. Returns :math:`w_{\Delta}(\gamma_{j, i})`"
         return self.diag_winds[j][i]
     def wind_x_plus(self, j, i):
-        "j MUST come before i in intersection_path"
+        "j MUST come before i in intersection_path. Returns :math:`w_{\X+}(\gamma_{j, i})`"
         return (self.writhe_states[i][0] - self.writhe_states[j][0]) // 2
     def homfly_vectors(self):
         "return s_vec, a_vec, q_diag"
@@ -207,6 +223,7 @@ class winding_tracker:
         return s_vec, a_vec, q_diag
     
     def colored_jones_vectors(self):
+        "returns h_vec, q_diag"
         mu1, mu2, mu3 = mu_func.mus(self.num, self.denom)
         h_vec = [0] * self.num
         q_diag = [0] * self.num
