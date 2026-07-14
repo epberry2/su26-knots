@@ -119,7 +119,20 @@ def truncate(p, max_power):
     return truncated_poly
 
 def create_heatmap(u, v, j=10, qsub=2, trunc=50, tail=True):
-    # creates a heatmap to visualize the tail of the colored jones polynomial
+    """Creates heatmap for the tail of the color jones polynomial of a rational knot
+
+    Args:
+        u (int): Numerator.
+        v (int): Denominator.
+        j (int): Highest color to calculate.
+        qsub (int): q specialization, 2 gives the Jones polynomial.
+        trunc (int): Highest degree for each polynomial.
+        tail (bool): True to compute tail, False to compute head.
+
+    Returns:
+        Saves image to path.
+    """
+    
     polies = [] # create list of j colored jones polynomials
     for i in range(1, j+1):
         sub = substitute(u, v, i, qsub)
@@ -181,5 +194,3 @@ def create_heatmap(u, v, j=10, qsub=2, trunc=50, tail=True):
         plt.savefig(f"tails/K_{u}_{v}_{qsub}")
     else:
         plt.savefig(f"tails/H_{u}_{v}_{qsub}")
-
-#create_heatmap(5, 1, j=20, qsub=2, trunc=50, tail=False)

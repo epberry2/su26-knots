@@ -12,6 +12,7 @@ q = sp.symbols('q')
 a = sp.symbols('a')
 
 def visualize_lattice(polynomial, path=None, show_plot=True, log_scale=True, edgecolor=None, thick_dots = False, cols = 'viridis'):
+    """Visualizes the colored Homfly polynomial of some rational knot"""
     p_dict = polynomial.as_dict()
     keys = p_dict.keys()
     x, y = zip(*keys)

@@ -2,7 +2,7 @@ import numpy as np
 from quivers.knot_quiver import colored_homfly_vectors_and_quiver
 
 def create_quiver_table(n, path="table"):
-    # writes to text file all quivers of knots up to numerator n
+    """Writes to text file all quivers of rational knots up to numerator n."""
     with open(f"{path}.txt", 'w') as f:
         for i in range(1,n+1,2):
             for j in range(1,i):
@@ -16,7 +16,7 @@ def create_quiver_table(n, path="table"):
                     pass
 
 def create_A_table(n, path="a_table"):
-    # writes to text file all quivers of knots up to numerator n
+    """Writes to text file A vectors of rational knots up to numerator n."""
     with open(f"{path}.txt", 'w') as f:
         for i in range(1,n+1,2):
             for j in range(1,i):
@@ -31,7 +31,7 @@ def create_A_table(n, path="a_table"):
                     pass    
 
 def create_S_table(n, path="s_table"):
-    # writes to text file all quivers of knots up to numerator n
+    """Writes to text file S vectors of rational knots up to numerator n."""
     with open(f"{path}.txt", 'w') as f:
         for i in range(1,n+1,2):
             for j in range(1,i):
@@ -46,7 +46,7 @@ def create_S_table(n, path="s_table"):
                     pass  
 
 def create_diag_table(n, path="diag_table"):
-    # writes to text file all quivers of knots up to numerator n
+    """Writes to text file all quiver diagonals of rational knots up to numerator n."""
     with open(f"{path}.txt", 'w') as f:
         for i in range(1,n+1,2):
             for j in range(1,i):
