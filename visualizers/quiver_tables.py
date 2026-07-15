@@ -59,3 +59,25 @@ def create_diag_table(n, path="diag_table"):
                     
                 except:
                     pass   
+
+def diff_quiv(i, j):
+    _, _, Q = colored_homfly_vectors_and_quiver(i, j)
+    D = Q[1:, 1:] - Q[1:, :-1] - Q[:-1, 1:] + Q[:-1, :-1]
+    return D
+
+def create_diff_table(n, path="diff_table"):
+    """Writes to text file all difference quivers of rational knots up to numerator n."""
+    with open(f"{path}.txt", 'w') as f:
+        for i in range(1,n+1,2):
+            for j in range(1,i):
+                try:                   
+                    Q = diff_quiv(i,j)
+                    Q_numpy = np.array(Q.tolist(), dtype=int)
+                    f.write(f"D matrix for K_{i}/{j}\n")
+                    np.savetxt(f, Q_numpy, fmt="%3d", delimiter=" ")
+                    f.write("\n")
+                    
+                except:
+                    pass   
+
+create_diff_table(50)
