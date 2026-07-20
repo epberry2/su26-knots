@@ -186,7 +186,7 @@ class winding_tracker:
 
        
     def _trace_path(self):
-        """Splits :math:`\overline{\\alpha_{u/v}}` into a composition of loops, and then \\
+        r"""Splits :math:`\overline{\\alpha_{u/v}}` into a composition of loops, and then \\
         progresses sequentially through them, updating writhes along the way
         """
         path, loops = findpathwithloops(self.num, self.denom)
@@ -197,10 +197,10 @@ class winding_tracker:
             self._step(curr_point, next_point, path_type)
     
     def wind_diag(self, j, i):
-        "j MUST come before i in intersection_path. Returns :math:`w_{\Delta}(\gamma_{j, i})`"
+        r"j MUST come before i in intersection_path. Returns :math:`w_{\Delta}(\gamma_{j, i})`"
         return self.diag_winds[j][i]
     def wind_x_plus(self, j, i):
-        "j MUST come before i in intersection_path. Returns :math:`w_{\X+}(\gamma_{j, i})`"
+        r"j MUST come before i in intersection_path. Returns :math:`w_{\X+}(\gamma_{j, i})`"
         return (self.writhe_states[i][0] - self.writhe_states[j][0]) // 2
     def homfly_vectors(self):
         "return s_vec, a_vec, q_diag"

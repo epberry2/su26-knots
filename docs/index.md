@@ -1,13 +1,38 @@
 ---
-title: "Colored Homfly Polynomials of Rational Knots"
+title: "Colored HOMFLY-PT Polynomials of Rational Knots"
 layout: "home"
 ---
 
-# Homfly Quivers of Rational Knots
+# HOMFLY-PT Quivers of Rational Knots
 
-This program is used to compute the Homfly quiver data for a given rational knot K_u/v. From this data, we can compute the colored Homfly polynomials.
+This program is used to compute the Homfly quiver data for a given rational knot \(K_{u/v}\). From this data, we can compute the colored Homfly polynomials.
 
 ## About
 
-This code was written for the UIUC Summer IML project: Colored HOMFLY polynomials of Rational Knots. We developed a fast algorithm to compute colored Homfly polynomials, which then can be specialized to the colored Jones and colored sl_N polynomials. We have also implemented functions to visualize these polynomials, and how they vary with color. In particular, we visualize how tails and heads form for each of these polynomials.
+This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynomials of Rational Knots. We developed a fast algorithm to compute colored Homfly polynomials, which then can be specialized to the colored Jones and colored \(\mathfrak{sl}_N\) polynomials. We have also implemented functions to visualize these polynomials, and how they vary with color. In particular, we visualize how tails and heads form for each of these polynomials.
+
+## Visualizations
+
+<figure style="text-align: center;">
+  <img src="images/K_5_2_5.svg" width="600">
+  <figcaption>Figure 1. The 5th-Colored HOMFLY-PT Polynomial of 
+  \(
+    K_{5/2}.
+  \)
+  </figcaption>
+</figure>
+
+<figure style="text-align: center;">
+  <img src="images/K_5_2_10.svg" width="600">
+  <figcaption>Figure 2. The 10th-Colored HOMFLY-PT Polynomial of 
+  \(
+    K_{5/2}.
+  \)
+  </figcaption>
+</figure>
+
+<video controls autoplay loop muted playsinline width="700">
+  <source src="videos/heatmap_evolution_se_5_2.mp4" type="video/mp4">
+</video>
+
 

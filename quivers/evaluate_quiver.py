@@ -6,6 +6,7 @@ from collections import defaultdict
 from helpers.normalize_laurent import normalize_laurent_2var
 from helpers.quantum_algebra import QuantumCombinatorics
 from helpers.quantum_nums import qmultinom
+from quivers.knot_quiver import colored_homfly_vectors_and_quiver
 
 q = sp.symbols('q')
 a = sp.symbols('a')
@@ -30,9 +31,8 @@ def get_tuples(k, n):
         
     return result
 
-
 def evaluate_quiver_tangle(Q, S, A, u, v, j):
-    """Evaluates the j colored homfly polynomial from the quiver data of the tangle."""
+    # Evaluates the j colored homfly polynomial from the quiver data of the tangle.
 
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     S = np.array(S)
@@ -67,9 +67,9 @@ def evaluate_quiver_tangle(Q, S, A, u, v, j):
         bases_polys[i] = sp.Poly(dict(normalized[i]), (a,q))
     
     return bases_polys
-
+    
 def evaluate_quiver_knot(Q, S, A, u, v, j):
-    """Evaluates the j colored homfly polynomial given the K_(u/v) quiver."""
+    # Evaluates the j colored homfly polynomial given the K_(u/v) quiver.
     
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
@@ -102,7 +102,7 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
     return sp.Poly(dict(normalized), (a, q))
 
 def evaluate_quiver_knot_dict(Q, S, A, u, v, j):
-    """Evaluates the j colored homfly polynomial given the K_(u/v) quiver and returns a dictionary."""
+    # Evaluates the j colored homfly polynomial given the K_(u/v) quiver and returns a dictionary
 
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
@@ -126,7 +126,7 @@ def evaluate_quiver_knot_dict(Q, S, A, u, v, j):
     return (dict(poly))
 
 def evaluate_quiver_jones(Q, H, u, v, j):
-    """Evaluates the j colored Jones polynomial given the K_(u/v) quiver."""
+    # Evaluates the j colored Jones polynomial given the K_(u/v) quiver.
     
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
@@ -155,7 +155,7 @@ def evaluate_quiver_jones(Q, H, u, v, j):
     return sp.Poly(dict(normalized), q)
 
 def evaluate_quiver_qsub(Q, S, A, u, v, j, qsub):
-    """Evaluates the j colored sl_N jones polynomial given the K_(u/v) quiver (homfly quiver)."""
+    # Evaluates the j colored sl_N jones polynomial given the K_(u/v) quiver (homfly quiver).
     
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
@@ -185,8 +185,39 @@ def evaluate_quiver_qsub(Q, S, A, u, v, j, qsub):
 
     return sp.Poly(dict(normalized), q)
 
+def evaluate_quiver_fraction(Q, S, A, u, v, j, qnum, qdenom):
+    # Evaluates the j colored sl_N jones polynomial given the K_(u/v) quiver (homfly quiver).
+    
+    qc = QuantumCombinatorics() # creates cache for quantum multinomials
+    poly = defaultdict(int)
+    S = np.array(S)
+    A = np.array(A)
+    combos = get_tuples(u, j) # get all u-tuples with values adding up to j
+    combo_list = list(combos)
+
+    for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):        
+        d = np.array(d)
+        p1 = qdenom * np.dot(-S, d)   
+        p2 = np.dot(qnum * A, d)
+        p3 = qdenom * np.einsum('i,ij,j', d, -Q, d)
+        multinom = qc.get_multinomial(d)
+        sign = (-1) ** (np.dot(-S, d)  % 2)
+        for i, coeff in enumerate(multinom):
+            if coeff != 0:
+                poly[int(p1+p2+p3-(2*i*qdenom))] += int(sign * coeff)
+
+    # normalize polynomial so lowest powers are 0
+
+    min_value_key = min(poly)
+    normalized = {
+        k - min_value_key: val 
+        for k, val in poly.items()
+    }
+
+    return sp.Poly(dict(normalized), q)
+
 def evaluate_quiver_jones_from_homfly(Q, S, A, u, v, j):
-    """Evaluates the j colored jones polynomial given the K_(u/v) quiver (homfly quiver)."""
+    # Evaluates the j colored jones polynomial given the K_(u/v) quiver (homfly quiver).
     
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
@@ -218,7 +249,7 @@ def evaluate_quiver_jones_from_homfly(Q, S, A, u, v, j):
 
 
 def evaluate_quiver_jones_flipped_from_homfly(Q, S, A, u, v, j):
-    """Evaluates the flipped j colored jones polynomial given the K_(u/v) quiver (homfly quiver)."""
+    # Evaluates the flipped j colored jones polynomial given the K_(u/v) quiver (homfly quiver).
 
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
     poly = defaultdict(int)
@@ -251,7 +282,7 @@ def evaluate_quiver_jones_flipped_from_homfly(Q, S, A, u, v, j):
 
 
 def evaluate_quiver_knot_algebraic(Q, S, A, u, v, j):
-    """Evaluates the j colored homfly polynomial from the quiver knot using sympy algebra."""
+    # Evaluates the j colored homfly polynomial from the quiver knot using sympy algebra.
     
     S = np.array(S)
     A = np.array(A)
@@ -267,3 +298,58 @@ def evaluate_quiver_knot_algebraic(Q, S, A, u, v, j):
 
     return normalize_laurent_2var(homfly, a, q)
 
+
+def colored_homfly_polynomial(u,v,j):
+    r"""Computes the j colored Homfly polynomial for $K_{u/v}$.
+    
+    Args:
+        u (int): Numerator.
+        v (int): Denominator.
+        j (int): Color.
+        
+    Returns:
+        poly (sympy.polys.polytools.Poly): The colored Homfly polynomial for K.
+    """
+    S, A, Q = colored_homfly_vectors_and_quiver(u,v)
+    Q = np.array(Q.tolist(), dtype=int)
+    poly = evaluate_quiver_knot(Q, S, A, u, v, j)
+    return poly
+
+def colored_sln_polynomial(u,v,j,N):
+    r"""Computes the j colored $\mathfrak{sl}_N$ Jones polynomial for $K_{u/v}$.
+    
+    Args:
+        u (int): Numerator.
+        v (int): Denominator.
+        j (int): Color.
+        N (int): q specialization.
+        
+    Returns:
+        poly (sympy.polys.polytools.Poly): The colored $\mathfrak{sl}_N$ polynomial for K.
+    """
+
+    # Calculate homfly quiver and then specialize q->q^-1 and a->q^N
+    S, A, Q = colored_homfly_vectors_and_quiver(u, v)
+    Q_numpy = np.array(Q.tolist(), dtype=int) 
+    poly = evaluate_quiver_qsub(Q_numpy, S, A, u, v, j, N)
+
+    # normalize so that the first term is positive
+    if poly(0) < 0:
+        return -poly
+    return poly
+
+def colored_jones_polynomial(u,v,j):
+    r"""Computes the j colored Jones polynomial for $K_{u/v}$.
+    
+    Args:
+        u (int): Numerator.
+        v (int): Denominator.
+        j (int): Color.
+        
+    Returns:
+        poly (sympy.polys.polytools.Poly): The colored Jones polynomial for K.
+    """
+    S, A, Q = colored_homfly_vectors_and_quiver(u,v)
+    Q = np.array(Q.tolist(), dtype=int)
+    poly = evaluate_quiver_jones_from_homfly(Q, S, A, u, v, j)
+    return poly

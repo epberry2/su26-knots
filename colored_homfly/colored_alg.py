@@ -3,7 +3,7 @@ from math import gcd
 from typing import Dict, List, Tuple, Optional
 from helpers.quantum_nums import *
 from helpers.continuedfrac import *
-from helpers.plot_polynomial import *
+from visualizers.plot_polynomial import *
 import helpers.closure_formulas as cf
 from helpers.twist_matrix import twist_matrix, basis_index
 from helpers.normalize_laurent import normalize_laurent_2var
