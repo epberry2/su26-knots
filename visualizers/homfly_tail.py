@@ -316,3 +316,4 @@ def homfly_plots(u, v, trunc=100, dir="se"):
     print(f"Heatmap plots successfully saved to {output_path}")
     plt.close()
 
+homfly_tail_heatmap(49, 6, 4, 200, "nw")

@@ -8,6 +8,12 @@ site_name: Colored Homfly Polynomials of Rational Knots
 theme:
   name: material
 
+copyright: >
+  This material is based upon work supported by the
+  National Science Foundation under NSF Grant DMS-2405302.
+  <br>
+  <img src="/images/NSF_logo.png" width="120" style="margin-top: 10px;">
+
 plugins:
   - search
   - mkdocstrings:
@@ -15,17 +21,25 @@ plugins:
         python:
           paths: ["."]
 
+extra_css:
+  - stylesheets/extra.css
+
 nav:
   - Home: index.md
   - Tutorial: tutorial.md
   - API:
-    - Helpers: helpers.md
-    - Quivers: quivers.md
-    - Visualizers: visualizers.md
+    - Overview: API/index.md
+    - Helpers: API/helpers.md
+    - Quivers: API/quivers.md
+    - Visualizers: API/visualizers.md
+  - Gallery:
+    - Overview: gallery/index.md
+    - HOMFLY-PT Lattices: gallery/homfly_lattice.md
 
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
+  - md_in_html
 
 extra_javascript:
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
