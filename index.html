@@ -46,6 +46,8 @@
     
       <link rel="stylesheet" href="assets/_mkdocstrings.css">
     
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -278,6 +280,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#acknowledgements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acknowledgements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -377,7 +390,35 @@
   
   
     <li class="md-nav__item">
-      <a href="helpers/" class="md-nav__link">
+      <a href="API/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API/helpers/" class="md-nav__link">
         
   
   
@@ -405,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="quivers/" class="md-nav__link">
+      <a href="API/quivers/" class="md-nav__link">
         
   
   
@@ -433,7 +474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="visualizers/" class="md-nav__link">
+      <a href="API/visualizers/" class="md-nav__link">
         
   
   
@@ -441,6 +482,116 @@
     
   
     Visualizers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gallery
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Gallery
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gallery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="gallery/homfly_lattice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HOMFLY-PT Lattices
   
 
     
@@ -510,6 +661,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#acknowledgements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Acknowledgements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pages" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -540,7 +702,7 @@
 <h1 id="homfly-pt-quivers-of-rational-knots">HOMFLY-PT Quivers of Rational Knots</h1>
 <p>This program is used to compute the Homfly quiver data for a given rational knot <span class="arithmatex">\(K_{u/v}\)</span>. From this data, we can compute the colored HOMFLY-PT polynomials. </p>
 <h2 id="about">About</h2>
-<p>This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynomials of Rational Knots. We developed a fast algorithm to compute colored HOMFLY-PT polynomials, which then can be specialized to the colored Jones and colored <span class="arithmatex">\(\mathfrak{sl}_N\)</span> polynomials. We have also implemented functions to visualize these polynomials, and how they vary with color. In particular, we visualize how tails and heads form for each of these polynomials. These polynomials are calculated by means of the <a href="https://arxiv.org/abs/2004.10837">Knots-Quivers Correspondence</a> for rational knots. Thus the computation of these polynomials is reduced to calculating the quiver data of the knots. <a href="https://arxiv.org/abs/2603.01312">Higgins</a> details a geometric method to calculate these quivers based on winding numbers of curves in the plane, of which we make use of in our algorithm.</p>
+<p>This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynomials of Rational Knots. We developed a fast algorithm to compute colored HOMFLY-PT polynomials, which then can be specialized to the colored Jones and colored <span class="arithmatex">\(\mathfrak{sl}_N\)</span> polynomials. We have also implemented functions to visualize these polynomials, and how they vary with color. In particular, we visualize how tails and heads form for each of these polynomials. These polynomials are calculated by means of the <a href="https://arxiv.org/abs/1707.04017">Knots-Quivers Correspondence</a> for rational knots. Thus the computation of these polynomials is reduced to calculating the quiver data of the knots. <a href="https://arxiv.org/abs/2603.01312">Higgins</a> details a geometric method to calculate these quivers based on winding numbers of curves in the plane, of which we make use of in our algorithm.</p>
 <h2 id="visualizations">Visualizations</h2>
 <figure style="text-align: center;">
   <img src="images/K_5_2_5.svg" width="600">
@@ -564,11 +726,13 @@
   <source src="videos/heatmap_evolution_se_5_2.mp4" type="video/mp4">
 </video>
 
+<h2 id="acknowledgements">Acknowledgements</h2>
+<p>This project was fully supported by NSF Grant DMS-2405302. Additionally, we would like to thank Jonathan Higgins and Jake Rasmussen for leading this project and for their support.</p>
 <h2 id="pages">Pages</h2>
 <ul>
 <li><a href="tutorial/">Read the tutorial</a></li>
 <li><a href="https://github.com/epberry2/su26-knots">Github Repository</a></li>
-<li><a href="files/table.txt">List of Quivers</a></li>
+<li><a href="assets/files/table.txt">List of Quivers</a></li>
 <li><a href="bibliography/">Bibliography</a></li>
 </ul>
 
@@ -601,6 +765,11 @@
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      This material is based upon work supported by the National Science Foundation under NSF Grant DMS-2405302. <br> <img src="/images/NSF_logo.png" width="120" style="margin-top: 10px;">
+
+    </div>
   
   
     Made with
