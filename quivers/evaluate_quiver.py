@@ -1,7 +1,10 @@
 import sympy as sp
 import numpy as np
+import math
+import pickle
+import os
 from tqdm import tqdm
-from itertools import combinations, chain
+from itertools import combinations, chain, islice
 from collections import defaultdict
 from helpers.normalize_laurent import normalize_laurent_2var
 from helpers.quantum_algebra import QuantumCombinatorics
@@ -11,25 +14,57 @@ from quivers.knot_quiver import colored_homfly_vectors_and_quiver
 q = sp.symbols('q')
 a = sp.symbols('a')
 
-def get_tuples(k, n):
-    """Calculates all k-tuples with values adding up to n."""
+CHECKPOINT = "checkpoint.pkl"
 
-    # uses stars and bars method to get all k-tuples with values adding up to n
-    # If k is 1, there's only one valid tuple: (n,)
+def save_checkpoint(poly, count):
+    with open(CHECKPOINT, "wb") as f:
+        pickle.dump({"poly": poly, "count": count}, f)
+
+def load_checkpoint():
+    if not os.path.exists(CHECKPOINT):
+        return defaultdict(int), 0
+
+    with open(CHECKPOINT, "rb") as f:
+        data = pickle.load(f)
+
+    return data["poly"], data["count"]
+
+# def get_tuples(k, n):
+#     """Calculates all k-tuples with values adding up to n."""
+
+#     # uses stars and bars method to get all k-tuples with values adding up to n
+#     # If k is 1, there's only one valid tuple: (n,)
+#     if k == 1:
+#         return [(n,)]
+        
+#     result = []
+#     # We choose k-1 divider positions out of a total of n + k - 1 slots
+#     for dividers in combinations(range(n + k - 1), k - 1):
+#         # Add boundaries at the start (-1) and end (n + k - 1)
+#         full_dividers = (-1,) + dividers + (n + k - 1,)
+        
+#         # Calculate the distance between dividers to get the tuple values
+#         tup = tuple(full_dividers[i+1] - full_dividers[i] - 1 for i in range(k))
+#         result.append(tup)
+        
+#     return result
+
+def get_tuples(k, n):
+    """Yields all k-tuples of nonnegative integers adding up to n."""
+
     if k == 1:
-        return [(n,)]
-        
-    result = []
-    # We choose k-1 divider positions out of a total of n + k - 1 slots
+        yield (n,)
+        return
+
     for dividers in combinations(range(n + k - 1), k - 1):
-        # Add boundaries at the start (-1) and end (n + k - 1)
         full_dividers = (-1,) + dividers + (n + k - 1,)
-        
-        # Calculate the distance between dividers to get the tuple values
-        tup = tuple(full_dividers[i+1] - full_dividers[i] - 1 for i in range(k))
-        result.append(tup)
-        
-    return result
+
+        tup = tuple(
+            full_dividers[i + 1] - full_dividers[i] - 1
+            for i in range(k)
+        )
+
+        yield tup
 
 def evaluate_quiver_tangle(Q, S, A, u, v, j):
     # Evaluates the j colored homfly polynomial from the quiver data of the tangle.
@@ -39,10 +74,7 @@ def evaluate_quiver_tangle(Q, S, A, u, v, j):
     A = np.array(A)
     bases_polys = [0 for _ in range(j+1)]
     bases_dicts = [defaultdict(int) for _ in range(j+1)] # creates a list of dictionaries mapping powers to coefficients (a,q) -> k
-    combos = get_tuples(u+v, j)
-    combo_list = list(combos)
-
-    for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):      
+    for d in tqdm(get_tuples(u+v, j), total = math.comb(u+v+j-1, j), desc="Processing tuples", unit="tuple"):      
         d = np.array(d)
         weight = d[:u].sum()
         p1 = np.dot(S, d)
@@ -72,25 +104,34 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
     # Evaluates the j colored homfly polynomial given the K_(u/v) quiver.
     
     qc = QuantumCombinatorics() # creates cache for quantum multinomials
-    poly = defaultdict(int)
+    # poly = defaultdict(int)
     S = np.array(S)
     A = np.array(A)
-    combos = get_tuples(u, j) # get all u-tuples with values adding up to j
-    combo_list = list(combos)
-
-    for d in tqdm(combo_list, desc="Processing tuples", unit="tuple"):        
-        d = np.array(d)
-        p1 = np.dot(S, d)        
-        p2 = np.dot(A, d)
-        p3 = np.einsum('i,ij,j', d, Q, d)
-        multinom = qc.get_multinomial(d)
-        #multinom = qc.q_multinomial(d.sum(), list(d))
-        #sign = (-1) ** (p1 % 2)
-        for i, coeff in enumerate(multinom):
-            if coeff != 0:
-                if p1 % 2:
-                    poly[(p2, p1+p3+(2*i))] -= int(coeff)
-                else: poly[(p2, p1+p3+(2*i))] += int(coeff)
+    poly, start_count = load_checkpoint()
+    count = start_count
+    tuples = islice(get_tuples(u, j), start_count, None)
+    try:
+        for d in tqdm(tuples, total = math.comb(u+j-1, j),
+                      desc="Processing tuples", unit="tuple", initial=start_count):   
+            d = np.array(d)
+            p1 = np.dot(S, d)        
+            p2 = np.dot(A, d)
+            p3 = np.einsum('i,ij,j', d, Q, d)
+            multinom = qc.get_multinomial(d)
+            #multinom = qc.q_multinomial(d.sum(), list(d))
+            #sign = (-1) ** (p1 % 2)
+            for i, coeff in enumerate(multinom):
+                if coeff != 0:
+                    if p1 % 2:
+                        poly[(p2, p1+p3+(2*i))] -= int(coeff)
+                    else: poly[(p2, p1+p3+(2*i))] += int(coeff)
+            count += 1
+            if count % 100000 == 0:
+                save_checkpoint(poly, count)
+    except KeyboardInterrupt:
+        save_checkpoint(poly, count)
+        print(f"Saved checkpoint at count={count}")
+        raise
 
     # normalize polynomial so lowest powers are 0
     min_a, min_q = map(min, zip(*poly))
@@ -98,7 +139,8 @@ def evaluate_quiver_knot(Q, S, A, u, v, j):
         (k[0] - min_a, k[1] - min_q): val 
         for k, val in poly.items()
     }
-
+    if os.path.exists(CHECKPOINT):
+        os.remove(CHECKPOINT)
     return sp.Poly(dict(normalized), (a, q))
 
 def evaluate_quiver_knot_dict(Q, S, A, u, v, j):
