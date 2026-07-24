@@ -5,6 +5,8 @@
 
 site_name: Colored Homfly Polynomials of Rational Knots
 
+site_url: https://epberry2.github.io/su26-knots/
+
 theme:
   name: material
 
@@ -12,7 +14,7 @@ copyright: >
   This material is based upon work supported by the
   National Science Foundation under NSF Grant DMS-2405302.
   <br>
-  <img src="/images/NSF_logo.png" width="120" style="margin-top: 10px;">
+  <img src="/su26-knots/images/NSF_logo.png" width="120" style="margin-top: 10px;">
 
 plugins:
   - search

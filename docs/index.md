@@ -1,11 +1,15 @@
 ---
 title: "Colored HOMFLY-PT Polynomials of Rational Knots"
 layout: "home"
+author: "Elijah Berry, Rongjiang Guo, Eduardo Perez, Henry Zaslow"
 ---
 
 # HOMFLY-PT Quivers of Rational Knots
 
 This program is used to compute the Homfly quiver data for a given rational knot \(K_{u/v}\). From this data, we can compute the colored HOMFLY-PT polynomials. 
+
+## Authors:
+Elijah Berry · Rongjiang Guo · Eduardo Perez · Henry Zaslow
 
 ## About
 
