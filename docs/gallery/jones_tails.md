@@ -3,8 +3,8 @@
 Visualizations of the tail of the colored Jones polynomials and colored \(\mathfrak{sl}_N\) polynomials. 
 
 * x axis: even q powers
-* y axis: the jth colored Jones polynomial normalized by the lowest q power and so that the constant term is positive.
-* heatmap: the coefficient of the q monomial, where orange is +1, green is -1, red is > 1, and blue is < 1
+* y axis: jth colored Jones polynomial normalized by the lowest q power and so that the constant term is positive.
+* heatmap: coefficient of monomials, where orange is +1, green is -1, red is > 1, and blue is < 1
 
 Note that because of this color scheme, the color bar is often a bit buggy. Additionally, we plot a staircase that shows the highest stable q power for each polynomial.
 

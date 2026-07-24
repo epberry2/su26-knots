@@ -2,6 +2,12 @@
 
 Visualizations of the HOMFLY polynomial lattice.
 
+* x axis: q powers
+* y axis: a powers
+* heatmap: coefficient of monomials, where orange is +1, green is -1, red is > 1, and blue is < 1
+
+Note that we normalize by the lowest a and q powers so that it is a true polynomial.
+
 <div class="gallery">
 
   <div class="gallery-item">
