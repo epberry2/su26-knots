@@ -5,10 +5,6 @@
          <lastmod>2026-07-24</lastmod>
     </url>
     <url>
-         <loc>https://epberry2.github.io/su26-knots/bibliography/</loc>
-         <lastmod>2026-07-24</lastmod>
-    </url>
-    <url>
          <loc>https://epberry2.github.io/su26-knots/tutorial/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
@@ -34,6 +30,14 @@
     </url>
     <url>
          <loc>https://epberry2.github.io/su26-knots/gallery/homfly_lattice/</loc>
+         <lastmod>2026-07-24</lastmod>
+    </url>
+    <url>
+         <loc>https://epberry2.github.io/su26-knots/gallery/jones_tails/</loc>
+         <lastmod>2026-07-24</lastmod>
+    </url>
+    <url>
+         <loc>https://epberry2.github.io/su26-knots/pages/bibliography/</loc>
          <lastmod>2026-07-24</lastmod>
     </url>
 </urlset>
