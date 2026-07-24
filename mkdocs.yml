@@ -37,6 +37,7 @@ nav:
   - Gallery:
     - Overview: gallery/index.md
     - HOMFLY-PT Lattices: gallery/homfly_lattice.md
+    - Tail of Jones Polynomials: gallery/jones_tails.md
 
 markdown_extensions:
   - pymdownx.arithmatex:
