@@ -41,12 +41,18 @@ def x_plus_wind_matrix(u, v):
 
 def colored_homfly_vectors_and_quiver(
     u: int, v: int) -> Tuple[List[int], List[int], sp.Matrix]:
-    """Calculates the Homfly quiver data for the knot K_u/v
+    r"""Calculates the Homfly quiver data for the knot $K_{u/v}$
     
-    Input: u, v
+    Args:
+        u (int): Numerator.
+        v (int): Denominator.
     
-    Output: (S, A, Q) of colored Homfly polynomial for the knot K_{u/v}
+    Returns:
+        S (list): S vector of quiver data.
+        A (list): A vector of quiver data.
+        Q (sympy.Matrix): Homfly Quiver represented as an adjacency matrix.
     """
+
     if u < v:
         raise ValueError("U")
     winder = winding_tracker(u, v)
@@ -64,11 +70,15 @@ def colored_homfly_vectors_and_quiver(
 
 def colored_jones_vector_and_quiver(
     u, v) -> Tuple[List[int], sp.Matrix]:
-    """Calculates the Jones quiver data for the knot K_u/v
-
-    Input: u, v
+    r"""Calculates the Jones quiver data for the knot $K_{u/v}$
     
-    Output: (H, Q') of colored Jones polynomial for the knot K_{u/v}
+    Args:
+        u (int): Numerator.
+        v (int): Denominator.
+    
+    Returns:
+        H (list): H vector of quiver data.
+        Q (sympy.Matrix): Jones Quiver represented as an adjacency matrix.
     """
     winder = winding_tracker(u, v)
     Q = sp.Matrix.zeros(u, u)
@@ -86,8 +96,7 @@ def colored_jones_vector_and_quiver(
         
 @dataclass
 class winding_tracker:
-    """
-    Tracks the winding numbers for loops on alpha_u/v bar
+    r"""Tracks the winding numbers for loops on $\overline{\alpha_{u/v}}$.
     """
     num: int
     denom: int
@@ -197,13 +206,13 @@ class winding_tracker:
             self._step(curr_point, next_point, path_type)
     
     def wind_diag(self, j, i):
-        r"j MUST come before i in intersection_path. Returns :math:`w_{\Delta}(\gamma_{j, i})`"
+        # j MUST come before i in intersection_path. Returns :math:`w_{\Delta}(\gamma_{j, i})`
         return self.diag_winds[j][i]
     def wind_x_plus(self, j, i):
-        r"j MUST come before i in intersection_path. Returns :math:`w_{\X+}(\gamma_{j, i})`"
+        # j MUST come before i in intersection_path. Returns :math:`w_{\X+}(\gamma_{j, i})`
         return (self.writhe_states[i][0] - self.writhe_states[j][0]) // 2
     def homfly_vectors(self):
-        "return s_vec, a_vec, q_diag"
+        # return s_vec, a_vec, q_diag
         mu1, mu2, mu3 = mu_func.mus(self.num, self.denom)
         s_vec = [0] * self.num
         a_vec = [0] * self.num
@@ -223,7 +232,7 @@ class winding_tracker:
         return s_vec, a_vec, q_diag
     
     def colored_jones_vectors(self):
-        "returns h_vec, q_diag"
+        # returns h_vec, q_diag
         mu1, mu2, mu3 = mu_func.mus(self.num, self.denom)
         h_vec = [0] * self.num
         q_diag = [0] * self.num

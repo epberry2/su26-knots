@@ -6,10 +6,14 @@ author: "Elijah Berry, Rongjiang Guo, Eduardo Perez, Henry Zaslow"
 
 # HOMFLY-PT Quivers of Rational Knots
 
-This program is used to compute the Homfly quiver data for a given rational knot \(K_{u/v}\). From this data, we can compute the colored HOMFLY-PT polynomials. 
+This program is used to compute the HOMFLY-PT quiver data for a given [rational knot](https://en.wikipedia.org/wiki/2-bridge_knot) \(K_{u/v}\). From this data, we can compute the colored [HOMFLY-PT polynomials](https://en.wikipedia.org/wiki/HOMFLY_polynomial). 
 
 ## Authors:
-Elijah Berry · Rongjiang Guo · Eduardo Perez · Henry Zaslow
+Elijah Berry · Eduardo Perez · Henry Zaslow · Rongjiang Guo · Jonathan Higgins
+
+<figure style="text-align: center;">
+  <img src="images/mammoth.png" width="400">
+</figure>
 
 ## About
 
@@ -35,14 +39,16 @@ This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynom
   </figcaption>
 </figure>
 
-<video controls autoplay loop muted playsinline width="700">
-  <source src="videos/heatmap_evolution_se_5_2.mp4" type="video/mp4">
-    <figcaption>Figure 3. The Tail of the Colored HOMFLY-PT Polynomial of 
+<figure>
+  <video controls autoplay loop muted playsinline width="700">
+    <source src="videos/heatmap_evolution_se_5_2.mp4" type="video/mp4">
+  </video>
+  <figcaption>Figure 3. The Tail of the Colored HOMFLY-PT Polynomial of 
   \(
     K_{5/2}.
   \)
   </figcaption>
-</video>
+</figure>
 
 ## Acknowledgements
 
@@ -55,7 +61,6 @@ This project was fully supported by NSF Grant DMS-2405302. Additionally, we woul
 * [API Documentation](API/index.md)
 * [Gallery](gallery/index.md)
 * [List of Quivers](assets/files/table.txt)
-* [Bibliography](pages/bibliography.md)
 
 ## Contact
 

@@ -49,8 +49,8 @@ def visualize_lattice(polynomial, path=None, show_plot=True, log_scale=True, edg
     
     plt.title('Lattice points of Homfly Polynomial')
     if path is not None:
-        plt.savefig(f"{path}.svg", format="svg")
-        print(f"plot saved to {path}.svg")
+        plt.savefig(f"{path}.png", format="png")
+        print(f"plot saved to {path}.png")
     if show_plot:
         plt.show()
 

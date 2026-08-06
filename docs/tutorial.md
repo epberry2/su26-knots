@@ -7,7 +7,7 @@ This python library lets users compute and visualize colored HOMFLY-PT polynomia
 ## Clone the repository
 
 ```bash
-git clone https://github.com/epberry/su26-knots.git
+git clone https://github.com/epberry2/su26-knots.git
 cd su26-knots
 ```
 
@@ -76,5 +76,6 @@ This will print out:
 
 ## More Info
 
-Many of our functions use SymPy and NumPy, so if you are unfamiliar with these libraries, you can take a look at the [SymPy Documentation](https://docs.sympy.org/latest/index.html) and [NumPy Documentation](https://numpy.org/doc/stable/).
+Many of our functions use SymPy and NumPy, so if you are unfamiliar with these libraries, you can take a look at the [SymPy Documentation](https://docs.sympy.org/latest/index.html) and [NumPy Documentation](https://numpy.org/doc/stable/). 
 
+For more information on tails of colored polynomial invariants, check out our [preprint]() (coming soon).
