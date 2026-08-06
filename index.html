@@ -776,9 +776,13 @@
 
 
 <h1 id="homfly-pt-quivers-of-rational-knots">HOMFLY-PT Quivers of Rational Knots</h1>
-<p>This program is used to compute the Homfly quiver data for a given rational knot <span class="arithmatex">\(K_{u/v}\)</span>. From this data, we can compute the colored HOMFLY-PT polynomials. </p>
+<p>This program is used to compute the HOMFLY-PT quiver data for a given <a href="https://en.wikipedia.org/wiki/2-bridge_knot">rational knot</a> <span class="arithmatex">\(K_{u/v}\)</span>. From this data, we can compute the colored <a href="https://en.wikipedia.org/wiki/HOMFLY_polynomial">HOMFLY-PT polynomials</a>. </p>
 <h2 id="authors">Authors:</h2>
-<p>Elijah Berry · Rongjiang Guo · Eduardo Perez · Henry Zaslow</p>
+<p>Elijah Berry · Eduardo Perez · Henry Zaslow · Rongjiang Guo · Jonathan Higgins</p>
+<figure style="text-align: center;">
+  <img src="images/mammoth.png" width="400">
+</figure>
+
 <h2 id="about">About</h2>
 <p>This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynomials of Rational Knots. We developed a fast algorithm to compute colored HOMFLY-PT polynomials, which then can be specialized to the colored Jones and colored <span class="arithmatex">\(\mathfrak{sl}_N\)</span> polynomials. We have also implemented functions to visualize these polynomials, and how they vary with color. In particular, we visualize how tails and heads form for each of these polynomials. These polynomials are calculated by means of the <a href="https://arxiv.org/abs/1707.04017">Knots-Quivers Correspondence</a> for rational knots. Thus the computation of these polynomials is reduced to calculating the quiver data of the knots. <a href="https://arxiv.org/abs/2603.01312">Higgins</a> details a geometric method to calculate these quivers based on winding numbers of curves in the plane, of which we make use in our algorithm.</p>
 <h2 id="visualizations">Visualizations</h2>
@@ -800,14 +804,16 @@
   </figcaption>
 </figure>
 
-<video controls autoplay loop muted playsinline width="700">
-  <source src="videos/heatmap_evolution_se_5_2.mp4" type="video/mp4">
-    <figcaption>Figure 3. The Tail of the Colored HOMFLY-PT Polynomial of 
+<figure>
+  <video controls autoplay loop muted playsinline width="700">
+    <source src="videos/heatmap_evolution_se_5_2.mp4" type="video/mp4">
+  </video>
+  <figcaption>Figure 3. The Tail of the Colored HOMFLY-PT Polynomial of 
   \(
     K_{5/2}.
   \)
   </figcaption>
-</video>
+</figure>
 
 <h2 id="acknowledgements">Acknowledgements</h2>
 <p>This project was fully supported by NSF Grant DMS-2405302. Additionally, we would like to thank Jonathan Higgins and Jake Rasmussen for leading this project and for their support.</p>
@@ -818,7 +824,6 @@
 <li><a href="API/">API Documentation</a></li>
 <li><a href="gallery/">Gallery</a></li>
 <li><a href="assets/files/table.txt">List of Quivers</a></li>
-<li><a href="pages/bibliography/">Bibliography</a></li>
 </ul>
 <h2 id="contact">Contact</h2>
 <p>If you have questions about the project, encounter an issue, or would like to learn more about the software, please contact us at epberry2@illinois.edu, ep21@illinois.edu, rg45@illinois.edu, and hzaslow2@illinois.edu.</p>
