@@ -60,7 +60,7 @@ This project was fully supported by NSF Grant DMS-2405302. Additionally, we woul
 * [Github Repository](https://github.com/epberry2/su26-knots)
 * [API Documentation](API/index.md)
 * [Gallery](gallery/index.md)
-* [List of Quivers](assets/files/table.txt)
+* [Quiver Tables](quivers.md)
 
 ## Contact
 

@@ -1,5 +1,6 @@
 import numpy as np
 from quivers.knot_quiver import colored_homfly_vectors_and_quiver
+from quivers.tail_quivs import colored_homfly_head_vectors_and_quiver, colored_homfly_tail_vectors_and_quiver
 
 def create_quiver_table(n, path="table"):
     """Writes to text file all quivers of rational knots up to numerator n."""
@@ -80,4 +81,47 @@ def create_diff_table(n, path="diff_table"):
                 except:
                     pass   
 
-create_diff_table(50)
+def create_head_table(n, path="head_table"):
+    """Writes to text file all head subquivers of rational knots up to numerator n."""
+    with open(f"{path}.txt", 'w') as f:
+        for i in range(1,n+1,2):
+            for j in range(1,i):
+                try:                   
+                    S, A, Q = colored_homfly_head_vectors_and_quiver(i,j)
+                    S = np.array(S)
+                    A = np.array(A)
+                    Q_numpy = np.array(Q.tolist(), dtype=int)
+                    f.write(f"Head subquiver data for K_{i}/{j}\n")
+                    f.write("S:\n")
+                    np.savetxt(f, [S], fmt="%3d", delimiter=" ")
+                    f.write("\nA:\n")
+                    np.savetxt(f, [A], fmt="%3d", delimiter=" ")
+                    f.write("\nQ:\n")
+                    np.savetxt(f, Q_numpy, fmt="%3d", delimiter=" ")
+                    f.write("\n")
+                    
+                except:
+                    pass   
+
+def create_tail_table(n, path="tail_table"):
+    """Writes to text file all tail subquivers of rational knots up to numerator n."""
+    with open(f"{path}.txt", 'w') as f:
+        for i in range(1,n+1,2):
+            for j in range(1,i):
+                try:                   
+                    S, A, Q = colored_homfly_tail_vectors_and_quiver(i,j)
+                    S = np.array(S)
+                    A = np.array(A)
+                    Q_numpy = np.array(Q.tolist(), dtype=int)
+                    f.write(f"Tail subquiver data for K_{i}/{j}\n")
+                    f.write("S:\n")
+                    np.savetxt(f, [S], fmt="%3d", delimiter=" ")
+                    f.write("\nA:\n")
+                    np.savetxt(f, [A], fmt="%3d", delimiter=" ")
+                    f.write("\nQ:\n")
+                    np.savetxt(f, Q_numpy, fmt="%3d", delimiter=" ")
+                    f.write("\n")
+                    
+                except:
+                    pass   
+create_S_table(50)

@@ -38,6 +38,7 @@ nav:
     - Overview: gallery/index.md
     - HOMFLY-PT Lattices: gallery/homfly_lattice.md
     - Tail of Jones Polynomials: gallery/jones_tails.md
+  - Tables of Quivers: quivers.md
 
 markdown_extensions:
   - pymdownx.arithmatex:

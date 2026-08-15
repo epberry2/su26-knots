@@ -283,5 +283,3 @@ def create_heatmap_frac(u, v, j=10, qnum=2, qdenom=1, trunc=50, tail=True):
         plt.savefig(f"tails/K_{u}_{v}_{qnum}_{qdenom}")
     else:
         plt.savefig(f"tails/H_{u}_{v}_{qnum}_{qdenom}")
-
-#create_heatmap_frac(5,2,j=10,qnum=1,qdenom=5,trunc=50,tail=True)

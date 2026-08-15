@@ -95,8 +95,3 @@ def colored_homfly_head_vectors_and_quiver(u, v):
     sort_S, sort_A, sort_Q = permute_vectors_and_quiver(norm_S, norm_A, norm_Q)
     sub_S, sub_A, sub_Q = sub_vectors_and_quiver(sort_S, sort_A, sort_Q)
     return sub_S, sub_A, sub_Q
-
-S, A, Q = colored_homfly_head_vectors_and_quiver(13,6)
-print(S)
-print(A)
-sp.pprint(Q)
