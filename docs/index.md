@@ -9,7 +9,7 @@ author: "Elijah Berry, Rongjiang Guo, Eduardo Perez, Henry Zaslow"
 This program is used to compute the HOMFLY-PT quiver data for a given [rational knot](https://en.wikipedia.org/wiki/2-bridge_knot) \(K_{u/v}\). From this data, we can compute the colored [HOMFLY-PT polynomials](https://en.wikipedia.org/wiki/HOMFLY_polynomial). 
 
 ## Authors:
-Elijah Berry · Eduardo Perez · Henry Zaslow · Rongjiang Guo · Jonathan Higgins
+Elijah Berry · Eduardo Perez · Henry Zaslow · Rongjiang Guo
 
 <figure style="text-align: center;">
   <img src="images/mammoth.png" width="400">

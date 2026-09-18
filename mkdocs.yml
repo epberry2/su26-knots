@@ -5,7 +5,7 @@
 
 site_name: Colored Homfly Polynomials of Rational Knots
 
-site_url: https://www.homfly-tails.com
+site_url: https://www.homfly-tails.com/
 
 theme:
   name: material
@@ -14,7 +14,7 @@ copyright: >
   This material is based upon work supported by the
   National Science Foundation under NSF Grant DMS-2405302.
   <br>
-  <img src="/su26-knots/images/NSF_logo.png" width="120" style="margin-top: 10px;">
+  <img src="../../images/NSF_logo.png" width="120" style="margin-top: 10px;">
 
 plugins:
   - search
@@ -38,6 +38,7 @@ nav:
     - Overview: gallery/index.md
     - HOMFLY-PT Lattices: gallery/homfly_lattice.md
     - Tail of Jones Polynomials: gallery/jones_tails.md
+    - Tail of HOMFLY-PT Polynomials: gallery/homfly_tails.md
   - Tables of Quivers: quivers.md
 
 markdown_extensions:

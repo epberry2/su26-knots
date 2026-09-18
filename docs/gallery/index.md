@@ -13,3 +13,9 @@ Visualizations of HOMFLY-PT polynomial lattices
 Visualizations of tails of the colored Jones polynomials
 
 [View the Jones Tails Gallery](jones_tails.md)
+
+## Tails of the Colored HOMFLY-PT Polynomials
+
+Visualizations of tails of the colored Jones polynomials
+
+[View the HOMFLY-PT Tails Gallery](homfly_tails.md)
