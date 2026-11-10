@@ -17,7 +17,7 @@ Elijah Berry · Eduardo Perez · Henry Zaslow · Rongjiang Guo
 
 ## About
 
-This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynomials of Rational Knots. We developed a fast algorithm to compute colored HOMFLY-PT polynomials, which then can be specialized to the colored Jones and colored \(\mathfrak{sl}_N\) polynomials. We have also implemented functions to visualize these polynomials, and how they vary with color. In particular, we visualize how tails and heads form for each of these polynomials. These polynomials are calculated by means of the [Knots-Quivers Correspondence](https://arxiv.org/abs/1707.04017) for rational knots. Thus the computation of these polynomials is reduced to calculating the quiver data of the knots. [Higgins](https://arxiv.org/abs/2603.01312) details a geometric method to calculate these quivers based on winding numbers of curves in the plane, of which we make use in our algorithm.
+This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynomials of Rational Knots. We developed a fast algorithm to compute colored HOMFLY-PT polynomials, which then can be specialized to the colored Jones and colored \(\mathfrak{sl}_N\) polynomials. We have also implemented functions to visualize these polynomials, and how they vary with color. In particular, we visualize how tails and heads form for each of these polynomials. These polynomials are calculated by means of the [Knots-Quivers Correspondence](https://arxiv.org/abs/1707.04017) for rational knots. Thus the computation of these polynomials is reduced to calculating the quiver data of the knots. [Higgins](https://arxiv.org/abs/2603.01312) details a geometric method to calculate these quivers based on winding numbers of curves in the plane, of which we make use in our algorithm. For more information, see our [preprint](https://arxiv.org/abs/2611.11685) on the tail of the colored HOMFLY-PT polynomial.
 
 ## Visualizations
 
@@ -52,7 +52,7 @@ This code was written for the UIUC Summer IML project: Colored HOMFLY-PT polynom
 
 ## Acknowledgements
 
-This project was fully supported by NSF Grant DMS-2405302. Additionally, we would like to thank Jonathan Higgins and Jake Rasmussen for leading this project and for their support.
+This project was supported by NSF Grant DMS-2405302 and NSF Grant DMS-2246537. Additionally, we would like to thank Jonathan Higgins and Jake Rasmussen for leading this project and for their support.
 
 ## Pages
 

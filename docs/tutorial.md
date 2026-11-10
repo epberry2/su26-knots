@@ -78,4 +78,4 @@ This will print out:
 
 Many of our functions use SymPy and NumPy, so if you are unfamiliar with these libraries, you can take a look at the [SymPy Documentation](https://docs.sympy.org/latest/index.html) and [NumPy Documentation](https://numpy.org/doc/stable/). 
 
-For more information on tails of colored polynomial invariants, check out our [preprint]() (coming soon).
+For more information on tails of colored polynomial invariants, check out our [preprint](https://arxiv.org/abs/2611.11685) on the tail of the colored HOMFLY-PT polynomial.
