@@ -2351,7 +2351,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">)</span>
             <span class="n">colorbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">scatter</span><span class="p">)</span>
-            <span class="n">colorbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;coefficient of monomial (log scale)&#39;</span><span class="p">)</span>
+            <span class="n">colorbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;coefficient of monomial&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">cols</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="s2">&quot;green&quot;</span><span class="p">]:</span>
             <span class="n">scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">sizes</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">edgecolor</span><span class="p">)</span>
@@ -2362,7 +2362,7 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;q powers&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;a powers&#39;</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Lattice points of Homfly Polynomial&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Lattice Points of HOMFLY-PT Polynomial&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;plot saved to </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
@@ -3187,8 +3187,7 @@ Rows = a_power, Columns = q_power.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>visualizers\homfly_head_torus.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 79</span>
-<span class="normal"> 80</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
 <span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
@@ -3234,7 +3233,8 @@ Rows = a_power, Columns = q_power.</p>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
-<span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">plot_heatmap</span><span class="p">(</span><span class="n">coeff_dict</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Coefficient heatmap&quot;</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="normal">126</span>
+<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">plot_heatmap</span><span class="p">(</span><span class="n">coeff_dict</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Coefficient heatmap&quot;</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    coeff_dict: {(a_power, q_power): coefficient}</span>
 <span class="sd">    Rows = a_power, Columns = q_power.</span>
